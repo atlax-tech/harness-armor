@@ -1,0 +1,31 @@
+{
+  "name": "harness-armor",
+  "owner": {
+    "name": "Harness Armor contributors"
+  },
+  "metadata": {
+    "description": "Suit up any repository with a maintainable Harness Engineering system.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "harness-armor",
+      "description": "Seven evidence-first Agent Skills for repository Harness Engineering.",
+      "source": "./",
+      "strict": false,
+      "version": "0.1.0",
+      "category": "development",
+      "keywords": ["harness-engineering", "agent-skills", "repository-automation", "agents-md"],
+      "skills": [
+        "./skills/harness",
+        "./skills/harness-init",
+        "./skills/harness-build",
+        "./skills/harness-promotion",
+        "./skills/harness-update",
+        "./skills/harness-check",
+        "./skills/harness-prompt"
+      ]
+    }
+  ]
+}
+

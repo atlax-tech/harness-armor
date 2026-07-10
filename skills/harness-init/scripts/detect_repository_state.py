@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import sys
+sys.dont_write_bytecode = True
 
 HERE = Path(__file__).resolve()
 for candidate in (HERE.parents[3] / "shared" / "scripts", HERE.parents[2] / ".harness-armor" / "scripts"):
@@ -12,4 +13,3 @@ else:
 
 from harness_armor.cli import main_detect_state  # noqa: E402
 raise SystemExit(main_detect_state())
-

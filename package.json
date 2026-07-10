@@ -1,0 +1,56 @@
+{
+  "name": "harness-armor",
+  "version": "0.1.0",
+  "description": "Suit up any repository with a maintainable Harness Engineering system.",
+  "type": "module",
+  "bin": {
+    "harness-armor": "./bin/harness-armor.js"
+  },
+  "files": [
+    "bin/",
+    "installer/",
+    "skills/",
+    "shared/",
+    ".claude-plugin/",
+    ".codex-plugin/",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "VERSION"
+  ],
+  "scripts": {
+    "test": "node --test tests/**/*.test.js",
+    "test:scripts": "node --test tests/scripts/*.test.js",
+    "test:skills": "node --test tests/skills/*.test.js",
+    "test:fixtures": "node --test tests/fixtures/*.test.js",
+    "test:installation": "node --test tests/installation/*.test.js",
+    "test:evals": "node --test tests/evals/*.test.js",
+    "lint:markdown": "node tests/scripts/markdown-lint.js",
+    "prepack": "npm test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "harness-engineering",
+    "agent-skills",
+    "claude-code",
+    "openai-codex",
+    "cursor",
+    "trae",
+    "agents-md",
+    "ai-coding-agents",
+    "repository-automation"
+  ],
+  "license": "CC-BY-NC-4.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<owner>/harness-armor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<owner>/harness-armor/issues"
+  },
+  "homepage": "https://github.com/<owner>/harness-armor#readme"
+}
+
