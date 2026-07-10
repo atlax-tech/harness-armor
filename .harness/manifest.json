@@ -8,17 +8,16 @@
   },
   "repository_state": "MANAGED_HARNESS",
   "managed_files": [
-    {"path": "AGENTS.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/PRODUCT.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/ARCHITECTURE.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/DESIGN.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed"},
-    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed"}
+    {"path": "AGENTS.md", "owner": "harness-armor", "mode": "managed", "sha256": "6599ee5b1a871df68a13c25fe56b43a0c24d7d88f28e8f471d3d0641a81d5d2a"},
+    {"path": "docs/PRODUCT.md", "owner": "harness-armor", "mode": "managed", "sha256": "c80c0dc47203b3c9e63d932534b90c5655dd6d72fe5c0b0e753bb132ada76b92"},
+    {"path": "docs/ARCHITECTURE.md", "owner": "harness-armor", "mode": "managed", "sha256": "e608722e727bdc7296a16a711eeb0a8158d7c6b39d1eb1bcb63396e2eadd6792"},
+    {"path": "docs/DESIGN.md", "owner": "harness-armor", "mode": "managed", "sha256": "158ff4d15898a0b1b5d01f24e80581cd6c37ead1bc2cdac536bad98d154dee2d"},
+    {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed", "sha256": "93f7276d2ce063a3f40a1eaf641c602e37d036fb8f1399afd57430716d6817f8"},
+    {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed", "sha256": "78ae0835877d02cdd999aafa17fe2be3fbad8ee82801e54b93036835ab00ccfb"},
+    {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed", "sha256": "120f0f3dc42095ab3566899f894987e7aba8de2c4500906ffdaa342dc27c903e"},
+    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "303fd8e527e1b6be59e489d9c31d8eb9b1c0e6909f6f7984c9602e2862d85786"}
   ],
   "source_index": ".harness/source-index.json",
   "unresolved_index": ".harness/unresolved.json",
   "last_updated": "2026-07-10T00:00:00Z"
 }
-

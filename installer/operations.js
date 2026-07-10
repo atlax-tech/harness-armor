@@ -93,7 +93,7 @@ async function preflight(destination, payload, previous, { requireExisting = fal
   for (const top of [...SKILLS, RUNTIME]) {
     for (const entry of await listFilesUnder(path.join(destination, top), top)) {
       if (entry.kind !== "file") conflicts.push({ path: entry.path, reason: entry.kind });
-      else if (!recorded.has(entry.path) && !desired.has(entry.path)) conflicts.push({ path: entry.path, reason: "untracked-in-owned-directory" });
+      else if (!recorded.has(entry.path)) conflicts.push({ path: entry.path, reason: "untracked-in-owned-directory" });
     }
   }
   return conflicts;

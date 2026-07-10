@@ -63,6 +63,28 @@ test("scanner returns exit 4 and explicit truncation at safety limit", () => {
   } finally { removeTree(root); }
 });
 
+test("nested .gitignore rules apply and explicit fingerprints cannot bypass exclusions", () => {
+  const root = temporaryDirectory();
+  try {
+    fs.mkdirSync(path.join(root, "sub"));
+    fs.writeFileSync(path.join(root, "sub", ".gitignore"), "ignored.txt\n");
+    fs.writeFileSync(path.join(root, "sub", "ignored.txt"), "nested-secret-canary\n");
+    fs.writeFileSync(path.join(root, "sub", "visible.txt"), "visible\n");
+    fs.writeFileSync(path.join(root, ".env"), "TOKEN=explicit-secret-canary\n");
+    fs.writeFileSync(path.join(root, ".env.production"), "TOKEN=production-secret-canary\n");
+    const scan = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "scan_repository.py"), root]);
+    assert.equal(scan.status, 0, scan.stderr);
+    assert.ok(scan.json.files.some((item) => item.path === "sub/visible.txt"));
+    assert.ok(scan.json.skipped.some((item) => item.path === "sub/ignored.txt" && item.reason === "gitignore"));
+    const fingerprint = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "fingerprint_sources.py"), root, ".env", ".env.production", "sub/ignored.txt"]);
+    assert.equal(fingerprint.status, 1);
+    assert.deepEqual(fingerprint.json.fingerprints, []);
+    assert.ok(fingerprint.json.errors.some((item) => item.reason === "sensitive-name"));
+    assert.ok(fingerprint.json.errors.some((item) => item.reason === "gitignore"));
+    assert.doesNotMatch(fingerprint.stdout, /explicit-secret-canary|production-secret-canary|nested-secret-canary/);
+  } finally { removeTree(root); }
+});
+
 test("manifest validator rejects traversal paths", () => {
   const root = temporaryDirectory();
   try {
@@ -83,6 +105,8 @@ test("manifest validator rejects traversal paths", () => {
     assert.equal(result.status, 1);
     assert.equal(result.json.valid, false);
     assert.ok(result.json.errors.some((item) => item.path.includes("managed_files")));
+    assert.ok(result.json.errors.some((item) => item.path.includes("source_index.schema_version")));
+    assert.ok(result.json.errors.some((item) => item.path.includes("unresolved_index.schema_version")));
   } finally { removeTree(root); }
 });
 
@@ -106,4 +130,3 @@ test("duplicate documents do not improve machine health score", () => {
     assert.equal(after.json.score, before.json.score);
   } finally { removeTree(root); }
 });
-

@@ -17,6 +17,21 @@
     {"id":"explicit-en-prompt","kind":"explicit","language":"en","prompt":"$harness-prompt generate execute, test, and review prompts per step.","expected_skill":"harness-prompt"},
     {"id":"explicit-zh-prompt","kind":"explicit","language":"zh-CN","prompt":"$harness-prompt 为计划每一步生成执行、测试、审查提示。","expected_skill":"harness-prompt"},
 
+    {"id":"slash-en-harness","kind":"explicit","language":"en","prompt":"/harness inspect this repository and route me.","expected_skill":"harness"},
+    {"id":"slash-zh-harness","kind":"explicit","language":"zh-CN","prompt":"/harness 判断仓库状态并路由。","expected_skill":"harness"},
+    {"id":"slash-en-init","kind":"explicit","language":"en","prompt":"/harness-init create the empty-repo skeleton without guessing.","expected_skill":"harness-init"},
+    {"id":"slash-zh-init","kind":"explicit","language":"zh-CN","prompt":"/harness-init 初始化空仓库，不要猜技术栈。","expected_skill":"harness-init"},
+    {"id":"slash-en-build","kind":"explicit","language":"en","prompt":"/harness-build turn these PRDs into a traceable Harness.","expected_skill":"harness-build"},
+    {"id":"slash-zh-build","kind":"explicit","language":"zh-CN","prompt":"/harness-build 从产品文档构造可追踪 Harness。","expected_skill":"harness-build"},
+    {"id":"slash-en-promotion","kind":"explicit","language":"en","prompt":"/harness-promotion inspect this legacy service and add a truthful Harness.","expected_skill":"harness-promotion"},
+    {"id":"slash-zh-promotion","kind":"explicit","language":"zh-CN","prompt":"/harness-promotion 升级这个老代码仓库。","expected_skill":"harness-promotion"},
+    {"id":"slash-en-update","kind":"explicit","language":"en","prompt":"/harness-update show drift and wait for approval.","expected_skill":"harness-update"},
+    {"id":"slash-zh-update","kind":"explicit","language":"zh-CN","prompt":"/harness-update 先给漂移计划，未授权不修改。","expected_skill":"harness-update"},
+    {"id":"slash-en-check","kind":"explicit","language":"en","prompt":"/harness-check audit this custom Harness read-only.","expected_skill":"harness-check"},
+    {"id":"slash-zh-check","kind":"explicit","language":"zh-CN","prompt":"/harness-check 只读检查并给评分证据。","expected_skill":"harness-check"},
+    {"id":"slash-en-prompt","kind":"explicit","language":"en","prompt":"/harness-prompt generate execute, test, and review prompts per step.","expected_skill":"harness-prompt"},
+    {"id":"slash-zh-prompt","kind":"explicit","language":"zh-CN","prompt":"/harness-prompt 为计划每一步生成执行、测试、审查提示。","expected_skill":"harness-prompt"},
+
     {"id":"natural-en-harness","kind":"natural","language":"en","prompt":"I do not know where to start. Inspect the repository state and tell me which Harness workflow fits.","expected_skill":"harness"},
     {"id":"natural-zh-harness","kind":"natural","language":"zh-CN","prompt":"我不知道该从哪个 Harness 流程开始，请先判断仓库状态并路由。","expected_skill":"harness"},
     {"id":"natural-en-init","kind":"natural","language":"en","prompt":"This repo only has a license. Create an agent-ready documentation skeleton without inventing the product or stack.","expected_skill":"harness-init"},
@@ -45,7 +60,11 @@
     {"id":"negative-en-prompt-generic","kind":"near-miss","language":"en","prompt":"Polish this ChatGPT prompt so it sounds friendlier.","expected_skill":null},
     {"id":"negative-zh-prompt-generic","kind":"near-miss","language":"zh-CN","prompt":"润色这段提示词，让语气更友好。","expected_skill":null},
     {"id":"negative-en-test-harness","kind":"near-miss","language":"en","prompt":"Create a load-test harness for the HTTP client.","expected_skill":null},
-    {"id":"negative-zh-test-harness","kind":"near-miss","language":"zh-CN","prompt":"给 HTTP 客户端创建压力测试脚手架。","expected_skill":null}
+    {"id":"negative-zh-test-harness","kind":"near-miss","language":"zh-CN","prompt":"给 HTTP 客户端创建压力测试脚手架。","expected_skill":null},
+
+    {"id":"wrong-en-init-legacy","kind":"wrong-skill","language":"en","prompt":"$harness-init initialize this existing Node service even though it already contains application code.","expected_skill":"harness-init","expected_outcome":"refuse-and-route:harness-promotion"},
+    {"id":"wrong-zh-init-legacy","kind":"wrong-skill","language":"zh-CN","prompt":"$harness-init 初始化这个已经有业务代码的 Node 服务。","expected_skill":"harness-init","expected_outcome":"refuse-and-route:harness-promotion"},
+    {"id":"wrong-en-build-empty","kind":"wrong-skill","language":"en","prompt":"$harness-build build a product-specific Harness in this empty repository with no product source.","expected_skill":"harness-build","expected_outcome":"refuse-and-route:harness-init"},
+    {"id":"wrong-zh-build-empty","kind":"wrong-skill","language":"zh-CN","prompt":"$harness-build 在没有任何产品资料的空仓库中构造产品 Harness。","expected_skill":"harness-build","expected_outcome":"refuse-and-route:harness-init"}
   ]
 }
-

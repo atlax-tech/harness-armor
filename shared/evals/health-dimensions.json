@@ -15,7 +15,8 @@
     {"id": "context-efficiency", "weight": 5},
     {"id": "cross-agent-compatibility", "weight": 4},
     {"id": "updateability", "weight": 5},
-    {"id": "safety-and-nonfiction", "weight": 4}
+    {"id": "safety", "weight": 2},
+    {"id": "nonfiction", "weight": 2}
   ],
   "rule": "Each deduction requires file-level evidence; file count never adds points."
 }

@@ -6,7 +6,6 @@ import fnmatch
 import hashlib
 import json
 import os
-import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -126,7 +125,7 @@ def is_sensitive(path: Path) -> bool:
     name = path.name.lower()
     if name == ".env.example" or name.endswith(".example"):
         return False
-    return name in SENSITIVE_NAMES or path.suffix.lower() in SENSITIVE_SUFFIXES
+    return name in SENSITIVE_NAMES or name.startswith(".env.") or path.suffix.lower() in SENSITIVE_SUFFIXES
 
 
 def looks_binary(path: Path, *, sample_size: int = 8192) -> bool:
@@ -146,6 +145,7 @@ def looks_binary(path: Path, *, sample_size: int = 8192) -> bool:
 @dataclass
 class IgnoreRule:
     pattern: str
+    base: str = ""
     negated: bool = False
     directory_only: bool = False
     anchored: bool = False
@@ -155,11 +155,20 @@ class IgnoreRule:
             return False
         pattern = self.pattern.rstrip("/")
         target = rel_path.rstrip("/")
+        if self.base:
+            if target == self.base:
+                local = ""
+            elif target.startswith(self.base + "/"):
+                local = target[len(self.base) + 1:]
+            else:
+                return False
+        else:
+            local = target
         if self.anchored:
-            return fnmatch.fnmatchcase(target, pattern)
+            return fnmatch.fnmatchcase(local, pattern)
         if "/" in pattern:
-            return fnmatch.fnmatchcase(target, pattern) or fnmatch.fnmatchcase(target, f"**/{pattern}")
-        return any(fnmatch.fnmatchcase(part, pattern) for part in PurePosixPath(target).parts)
+            return fnmatch.fnmatchcase(local, pattern) or fnmatch.fnmatchcase(local, f"**/{pattern}")
+        return any(fnmatch.fnmatchcase(part, pattern) for part in PurePosixPath(local).parts)
 
 
 class IgnoreMatcher:
@@ -168,29 +177,41 @@ class IgnoreMatcher:
     def __init__(self, root: Path) -> None:
         self.root = root
         self.rules: list[IgnoreRule] = []
-        ignore_file = root / ".gitignore"
-        if ignore_file.is_file() and not ignore_file.is_symlink():
-            try:
-                for raw in ignore_file.read_text(encoding="utf-8", errors="replace").splitlines():
-                    line = raw.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    negated = line.startswith("!")
-                    if negated:
-                        line = line[1:]
-                    anchored = line.startswith("/")
-                    if anchored:
-                        line = line[1:]
-                    self.rules.append(
-                        IgnoreRule(
-                            pattern=line,
-                            negated=negated,
-                            directory_only=line.endswith("/"),
-                            anchored=anchored,
-                        )
-                    )
-            except OSError:
-                pass
+        self.loaded: set[Path] = set()
+        self.load_directory(root)
+
+    def load_directory(self, directory: Path) -> None:
+        ignore_file = directory / ".gitignore"
+        if ignore_file in self.loaded or not ignore_file.is_file() or ignore_file.is_symlink():
+            return
+        self.loaded.add(ignore_file)
+        base = directory.relative_to(self.root).as_posix()
+        self._load(ignore_file, "" if base == "." else base)
+
+    def _load(self, ignore_file: Path, base: str) -> None:
+        try:
+            lines = ignore_file.read_text(encoding="utf-8", errors="replace").splitlines()
+        except OSError:
+            return
+        for raw in lines:
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            negated = line.startswith("!")
+            if negated:
+                line = line[1:]
+            anchored = line.startswith("/")
+            if anchored:
+                line = line[1:]
+            self.rules.append(
+                IgnoreRule(
+                    pattern=line,
+                    base=base,
+                    negated=negated,
+                    directory_only=line.endswith("/"),
+                    anchored=anchored,
+                )
+            )
 
     def ignored(self, rel_path: str, *, is_dir: bool) -> bool:
         ignored = False
@@ -269,6 +290,7 @@ def scan_repository(
 
     for current, dirs, files in os.walk(root, topdown=True, followlinks=False, onerror=onerror):
         current_path = Path(current)
+        matcher.load_directory(current_path)
         safe_dirs: list[str] = []
         for name in sorted(dirs):
             candidate = current_path / name
@@ -352,4 +374,3 @@ def text_excerpt(path: Path, *, max_bytes: int = 128 * 1024) -> str:
             return handle.read(max_bytes).decode("utf-8", errors="replace")
     except OSError:
         return ""
-

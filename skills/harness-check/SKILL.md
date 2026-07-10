@@ -52,8 +52,10 @@ rewrite the repository.
    - safe change boundaries and verification loops;
    - source traceability, continuity, and ownership;
    - cross-Agent portability and updateability;
+   - safety: secret exposure, destructive scripts, prompt-injection handling,
+     and unsafe change boundaries;
    - unsupported claims, requirement degradation, and placeholders presented as
-     completion.
+     completion (non-fiction).
 8. Classify findings as `BLOCKING`, `HIGH`, or `IMPROVEMENT` using
    [assets/health-report.md](assets/health-report.md).
 9. For custom Harnesses, recommend compatible additive improvements. Do not

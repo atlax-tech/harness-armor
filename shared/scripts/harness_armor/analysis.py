@@ -304,7 +304,8 @@ HEALTH_WEIGHTS = {
     "context-efficiency": 5,
     "cross-agent-compatibility": 4,
     "updateability": 5,
-    "safety-and-nonfiction": 4,
+    "safety": 2,
+    "nonfiction": 2,
 }
 
 
@@ -395,7 +396,12 @@ def score_health(root: Path) -> dict[str, Any]:
             _missing_evidence(observed, [".harness/manifest.json", ".harness/source-index.json"]),
             "managed-state evidence",
         ),
-        "safety-and-nonfiction": (
+        "safety": (
+            0.5 if observed["AGENTS.md"] else 0.0,
+            _missing_evidence(observed, ["AGENTS.md"]),
+            "secret handling and safe-change boundaries require host evidence; score capped at 50%",
+        ),
+        "nonfiction": (
             0.5 if observed["docs/ACCEPTANCE.md"] else 0.0,
             _missing_evidence(observed, ["docs/ACCEPTANCE.md"]),
             "semantic non-fiction review requires host evidence; score capped at 50%",

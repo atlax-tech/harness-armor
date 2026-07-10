@@ -28,6 +28,29 @@ test("all adapters resolve inside the supplied fake home or project", () => {
   } finally { removeTree(home); removeTree(projectRoot); }
 });
 
+test("claude-user and codex-user install, doctor, and uninstall into an isolated home", () => {
+  for (const target of ["claude-user", "codex-user"]) {
+    const home = temporaryDirectory(`harness-armor-${target}-`);
+    try {
+      const installed = runJson(process.execPath, [bin, "install", "--target", target, "--home", home, "--json"]);
+      assert.equal(installed.status, 0, installed.stderr);
+      assert.equal(installed.json.status, "installed");
+      const suffix = target === "claude-user" ? [".claude", "skills"] : [".agents", "skills"];
+      const destination = path.join(home, ...suffix);
+      assert.deepEqual(fs.readdirSync(destination).filter((name) => name !== ".harness-armor").sort(), [...SKILLS].sort());
+      const wrapper = run(PYTHON, [path.join(destination, "harness", "scripts", "detect_repository_state.py"), "--help"]);
+      assert.equal(wrapper.status, 0, wrapper.stderr);
+      const doctor = runJson(process.execPath, [bin, "doctor", "--target", target, "--home", home, "--json"]);
+      assert.equal(doctor.status, 0, doctor.stdout);
+      assert.equal(doctor.json.healthy, true);
+      const uninstall = runJson(process.execPath, [bin, "uninstall", "--target", target, "--home", home, "--json"]);
+      assert.equal(uninstall.status, 0, uninstall.stdout);
+      assert.equal(uninstall.json.status, "uninstalled");
+      for (const skill of SKILLS) assert.equal(fs.existsSync(path.join(destination, skill)), false);
+    } finally { removeTree(home); }
+  }
+});
+
 test("dry-run does not create a custom destination", () => {
   const parent = temporaryDirectory();
   const destination = path.join(parent, "not-created");
@@ -70,6 +93,23 @@ test("update refuses to overwrite a user-modified Skill", () => {
     assert.equal(update.json.status, "conflict");
     assert.ok(update.json.conflicts.some((item) => item.path === "harness/SKILL.md" && item.reason === "user-modified"));
     assert.equal(fs.readFileSync(skill, "utf8"), before);
+  } finally { removeTree(destination); }
+});
+
+test("update refuses an untracked local file even when the incoming payload owns that path", () => {
+  const destination = temporaryDirectory();
+  try {
+    assert.equal(run(process.execPath, [bin, "install", "--target", "custom", "--dest", destination, "--json"]).status, 0);
+    const manifestPath = path.join(destination, ".harness-armor", "install-manifest.json");
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    manifest.files = manifest.files.filter((item) => item.path !== "harness/assets/state-report.md");
+    fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+    const local = path.join(destination, "harness", "assets", "state-report.md");
+    const before = fs.readFileSync(local, "utf8");
+    const update = runJson(process.execPath, [bin, "update", "--target", "custom", "--dest", destination, "--json"]);
+    assert.equal(update.status, 1);
+    assert.ok(update.json.conflicts.some((item) => item.path === "harness/assets/state-report.md" && item.reason === "untracked-in-owned-directory"));
+    assert.equal(fs.readFileSync(local, "utf8"), before);
   } finally { removeTree(destination); }
 });
 
@@ -118,4 +158,3 @@ test("only distribution commands are accepted", () => {
     assert.equal(result.status, 2, command);
   }
 });
-

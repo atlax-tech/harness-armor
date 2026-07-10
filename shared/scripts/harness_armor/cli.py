@@ -14,7 +14,7 @@ from .analysis import (
     score_health,
     validate_structure,
 )
-from .common import HarnessError, ScanLimits, emit, resolve_root, scan_repository, sha256_file
+from .common import HarnessError, ScanLimits, emit, resolve_root, safe_relative_path, scan_repository
 from .manifest import validate_manifest_file
 
 
@@ -93,26 +93,26 @@ def main_fingerprint(argv: Optional[Sequence[str]] = None) -> int:
 
     def operation(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         root = resolve_root(args.root)
+        result = scan_repository(root, include_hashes=True)
+        scanned = {item["path"]: item for item in result.files}
         requested = args.paths
-        if requested:
-            rels = sorted(set(requested))
-        else:
-            result = scan_repository(root)
-            rels = [item["path"] for item in result.files if item["kind"] in {"document", "configuration", "code", "test"}]
+        rels = sorted(set(requested)) if requested else [item["path"] for item in result.files if item["kind"] in {"document", "configuration", "code", "test"}]
         fingerprints = []
         errors = []
         for rel in rels:
-            candidate = (root / rel).resolve()
-            try:
-                candidate.relative_to(root)
-            except ValueError:
+            normalized = Path(rel).as_posix()
+            if not safe_relative_path(normalized):
                 errors.append({"path": rel, "reason": "escapes-root"})
                 continue
-            if not candidate.is_file() or candidate.is_symlink():
-                errors.append({"path": rel, "reason": "missing-or-non-regular"})
+            item = scanned.get(normalized)
+            if item is None:
+                skipped = next((entry["reason"] for entry in result.skipped if entry["path"] == normalized), None)
+                errors.append({"path": rel, "reason": skipped or "excluded-missing-or-over-limit"})
                 continue
-            fingerprints.append({"path": candidate.relative_to(root).as_posix(), "size": candidate.stat().st_size, "sha256": sha256_file(candidate)})
-        payload = {"schema_version": "1.0.0", "root": str(root), "fingerprints": fingerprints, "errors": errors, "read_only": True}
+            fingerprints.append({"path": normalized, "size": item["size"], "sha256": item["sha256"]})
+        payload = {"schema_version": "1.0.0", "root": str(root), "fingerprints": fingerprints, "errors": errors, "warnings": result.warnings, "scan_truncated": result.truncated, "read_only": True}
+        if result.truncated:
+            return payload, EXIT_LIMIT
         return payload, EXIT_FINDINGS if errors else EXIT_OK
 
     return _run(parser, argv, operation)
