@@ -15,7 +15,7 @@
     {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed", "sha256": "93f7276d2ce063a3f40a1eaf641c602e37d036fb8f1399afd57430716d6817f8"},
     {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed", "sha256": "78ae0835877d02cdd999aafa17fe2be3fbad8ee82801e54b93036835ab00ccfb"},
     {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed", "sha256": "120f0f3dc42095ab3566899f894987e7aba8de2c4500906ffdaa342dc27c903e"},
-    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "303fd8e527e1b6be59e489d9c31d8eb9b1c0e6909f6f7984c9602e2862d85786"}
+    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "ab8890435440467f43dee6e10fd46db3545d211a1ef9f722e7be46e4669e31ea"}
   ],
   "source_index": ".harness/source-index.json",
   "unresolved_index": ".harness/unresolved.json",

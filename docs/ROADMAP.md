@@ -8,6 +8,14 @@
 - Fixture, trigger, workflow, installation, and platform CI coverage.
 - English and Simplified Chinese documentation.
 
+## 0.1.1 — trustworthy release
+
+- Fixed invalid unresolved status and stale PRODUCT.md fingerprint drift.
+- Real Claude Code installation, discovery, and invocation smoke test.
+- Executable Codex smoke test script with blocking evidence.
+- License assessment ADR and expanded package discoverability keywords.
+- Phase 2 strategy document tracked in version control.
+
 ## Later candidates
 
 These are proposals, not current capabilities:
