@@ -8,7 +8,7 @@
   },
   "repository_state": "MANAGED_HARNESS",
   "managed_files": [
-    {"path": "AGENTS.md", "owner": "harness-armor", "mode": "managed", "sha256": "6599ee5b1a871df68a13c25fe56b43a0c24d7d88f28e8f471d3d0641a81d5d2a"},
+    {"path": "AGENTS.md", "owner": "harness-armor", "mode": "managed", "sha256": "c580adad827c827328f1188b6fce9a7d7b802eaf6ce55267872f897547a7d521"},
     {"path": "docs/PRODUCT.md", "owner": "harness-armor", "mode": "managed", "sha256": "c6ea13ea7f3cc34fc04470017eb8f34ad10ce119d4e2d5cb39e90b461640d638"},
     {"path": "docs/ARCHITECTURE.md", "owner": "harness-armor", "mode": "managed", "sha256": "e608722e727bdc7296a16a711eeb0a8158d7c6b39d1eb1bcb63396e2eadd6792"},
     {"path": "docs/DESIGN.md", "owner": "harness-armor", "mode": "managed", "sha256": "158ff4d15898a0b1b5d01f24e80581cd6c37ead1bc2cdac536bad98d154dee2d"},
