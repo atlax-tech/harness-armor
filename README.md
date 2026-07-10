@@ -189,7 +189,7 @@ failure, and `4` safety-limit truncation.
 ### Claude Code Plugin Marketplace
 
 ```bash
-claude plugin marketplace add <owner>/harness-armor
+claude plugin marketplace add atlax-tech/harness-armor
 claude plugin install harness-armor@harness-armor
 ```
 
@@ -355,7 +355,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 - Real Claude Code, Codex, Cursor, and TRAE invocation tests require those
   clients and authenticated environments; they are not simulated as "passed."
 - The public owner and npm publishing identity are unresolved, so Marketplace
-  commands retain `<owner>` until release configuration.
+  commands retain `<owner>` until release configuration. The GitHub owner is
+  `atlax-tech`; npm publishing identity is pending.
 - The repository is publicly available under CC BY-NC 4.0. The non-commercial
   restriction means this is not an OSI-approved open-source license.
 

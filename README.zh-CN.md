@@ -177,7 +177,7 @@ Claude 独立安装使用 `/harness-*`；Codex 使用 `$harness-*`：
 ### Claude Code Plugin Marketplace
 
 ```bash
-claude plugin marketplace add <owner>/harness-armor
+claude plugin marketplace add atlax-tech/harness-armor
 claude plugin install harness-armor@harness-armor
 ```
 
@@ -335,7 +335,7 @@ npm pack --dry-run --json
 - `MIXED_OR_CONFLICTED` 有意采取保守判断。
 - Claude Code、Codex、Cursor、TRAE 的真实调用需要对应客户端和认证环境，本仓库
   不会把模拟测试宣称为真实通过。
-- GitHub owner 与 npm 发布身份尚未确定，因此 Marketplace 命令保留 `<owner>`。
+- GitHub owner 为 `atlax-tech`；npm 发布身份尚未确定，Marketplace 命令已使用真实 owner。
 - 本仓库采用 CC BY-NC 4.0 公开源代码；因含非商业限制，它不是 OSI 认可的
   Open Source License。
 

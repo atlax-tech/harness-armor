@@ -53,10 +53,10 @@
   "license": "CC-BY-NC-4.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<owner>/harness-armor.git"
+    "url": "git+https://github.com/atlax-tech/harness-armor.git"
   },
   "bugs": {
-    "url": "https://github.com/<owner>/harness-armor/issues"
+    "url": "https://github.com/atlax-tech/harness-armor/issues"
   },
-  "homepage": "https://github.com/<owner>/harness-armor#readme"
+  "homepage": "https://github.com/atlax-tech/harness-armor#readme"
 }

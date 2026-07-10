@@ -39,6 +39,7 @@ traditional CLI subcommands.
 
 ## Known unresolved release inputs
 
-The public GitHub owner and final npm publishing scope are intentionally
-unresolved. Documentation uses `<owner>` until a release owner is supplied.
+The GitHub owner is `atlax-tech`. The final npm publishing scope remains
+pending. Marketplace commands use `atlax-tech`; npm identity will be updated
+when configured.
 

@@ -4,9 +4,9 @@
   "items": [
     {
       "id": "release-owner",
-      "status": "UNRESOLVED",
+      "status": "INFERRED",
       "question": "Which GitHub owner and npm publishing identity will release Harness Armor?",
-      "impact": "README marketplace commands retain the <owner> placeholder until release configuration."
+      "impact": "GitHub owner is atlax-tech. npm publishing identity remains pending."
     }
   ]
 }
