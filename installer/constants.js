@@ -1,4 +1,4 @@
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.2";
 export const SPEC_VERSION = "1.0.0";
 export const INSTALL_SCHEMA_VERSION = "1.0.0";
 
@@ -22,4 +22,3 @@ export const EXIT = Object.freeze({
   PAYLOAD: 4,
   RECOVERY: 5,
 });
-

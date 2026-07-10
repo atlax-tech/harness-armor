@@ -16,6 +16,14 @@
 - License assessment ADR and expanded package discoverability keywords.
 - Phase 2 strategy document tracked in version control.
 
+## 0.1.2 — real-repository hardening
+
+- Role-equivalent custom Harness detection and scoring.
+- Reference coverage that distinguishes explicit links, existing inline paths,
+  and zero detected coverage without treating future paths as broken files.
+- Multilingual preservation-boundary recognition.
+- Real-repository regression fixtures and synchronized release-version checks.
+
 ## Later candidates
 
 These are proposals, not current capabilities:
@@ -24,4 +32,3 @@ These are proposals, not current capabilities:
 - Additional native client adapters only after official directory contracts are
   documented and tested.
 - Optional schema migrations when the managed Harness format reaches v2.
-

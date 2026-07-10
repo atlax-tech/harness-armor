@@ -3,6 +3,35 @@
 All notable changes to Harness Armor are documented here. The project follows
 Semantic Versioning and Conventional Commits.
 
+## [0.1.2] - 2026-07-11
+
+### Fixed
+
+- Recognize coherent custom Harnesses through role-equivalent product,
+  architecture, verification, continuity, and agent-entry evidence instead of
+  requiring Harness Armor's canonical filenames.
+- Score custom Harness layouts without zeroing structural dimensions solely
+  because `.harness` state or canonical document names are absent.
+- Count existing repository paths written as inline code while preserving
+  strict checks for explicit Markdown/HTML links; zero coverage and inline-only
+  coverage are now reported explicitly without API/package/future-path noise.
+- Recognize English and Chinese user-change preservation boundaries.
+- Enforce one release version across package, installer, plugins, Python
+  runtime, Harness manifest, and all seven Skill metadata blocks.
+
+### Added
+
+- Three real-scenario fixtures covering docs-only guidance, partial legacy
+  guidance, and a role-equivalent custom Harness.
+- Regression coverage for explicit broken links, zero-reference coverage,
+  inline-path ambiguity, and release version consistency.
+- Read-only validation evidence from two real repositories.
+
+### Changed
+
+- Bumped the release version to 0.1.2 and synchronized paired English and
+  Simplified Chinese release documentation.
+
 ## [0.1.1] - 2026-07-11
 
 ### Fixed

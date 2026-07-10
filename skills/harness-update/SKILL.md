@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables manifest validation, fingerprints, drift detection, and structure checks.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Update a managed Harness
@@ -95,4 +95,3 @@ diagnosis when safe application is not possible.
 Phase A reports the immutable plan and approval request. Phase B reports the
 approved scope, actual diffs, preserved conflicts, manifest/log updates, command
 evidence, residual drift, rollback status, and manual acceptance steps.
-

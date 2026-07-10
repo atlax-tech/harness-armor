@@ -26,6 +26,27 @@ test("exactly seven public Skills exist", () => {
   assert.deepEqual(actual, expected);
 });
 
+test("all release version surfaces match package.json", () => {
+  const version = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8")).version;
+  assert.equal(fs.readFileSync(path.join(ROOT, "VERSION"), "utf8").trim(), version);
+  assert.match(fs.readFileSync(path.join(ROOT, "installer", "constants.js"), "utf8"), new RegExp(`VERSION = ["']${version.replaceAll(".", "\\.")}["']`));
+  assert.equal(JSON.parse(fs.readFileSync(path.join(ROOT, ".codex-plugin", "plugin.json"), "utf8")).version, version);
+  const marketplace = JSON.parse(fs.readFileSync(path.join(ROOT, ".claude-plugin", "marketplace.json"), "utf8"));
+  assert.equal(marketplace.metadata.version, version);
+  assert.equal(marketplace.plugins[0].version, version);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(ROOT, ".harness", "manifest.json"), "utf8")).generator.version, version);
+  assert.match(fs.readFileSync(path.join(ROOT, "shared", "scripts", "harness_armor", "__init__.py"), "utf8"), new RegExp(`__version__ = ["']${version.replaceAll(".", "\\.")}["']`));
+  for (const readme of ["README.md", "README.zh-CN.md"]) {
+    const text = fs.readFileSync(path.join(ROOT, readme), "utf8");
+    assert.match(text, new RegExp(`version-${version.replaceAll(".", "\\.")}`), `${readme} version badge`);
+  }
+  assert.match(fs.readFileSync(path.join(ROOT, "CHANGELOG.md"), "utf8"), new RegExp(`## \\[${version.replaceAll(".", "\\.")}\\]`));
+  for (const name of expected) {
+    const text = fs.readFileSync(path.join(ROOT, "skills", name, "SKILL.md"), "utf8");
+    assert.match(text, new RegExp(`metadata:\\s+[\\s\\S]*?version: ["']${version.replaceAll(".", "\\.")}["']`), `${name} metadata version`);
+  }
+});
+
 for (const name of expected) {
   test(`${name} satisfies the open Skill structure and workflow contract`, () => {
     const root = path.join(ROOT, "skills", name);

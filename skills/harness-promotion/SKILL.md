@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables bounded scans, fingerprints, and structure validation.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Promote an existing codebase
@@ -111,4 +111,3 @@ documentation/code conflicts, created/approved files, preserved files,
 recommendations not implemented, actual validations, and manual acceptance
 steps. Recommend `harness-prompt` only when a concrete implementation plan is
 present.
-

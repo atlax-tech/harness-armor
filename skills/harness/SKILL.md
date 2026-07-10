@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables the bundled read-only detector.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Harness router
@@ -91,4 +91,3 @@ Use [assets/state-report.md](assets/state-report.md). Include state, confidence,
 evidence, uncertainties, selected specialist, invocation, and the fact that no
 files changed. After a specialist later completes, recommend at most one next
 step based on its actual result.
-

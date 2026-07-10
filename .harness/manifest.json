@@ -4,7 +4,7 @@
   "spec_version": "1.0.0",
   "generator": {
     "name": "harness-armor",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "repository_state": "MANAGED_HARNESS",
   "managed_files": [
@@ -15,9 +15,9 @@
     {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed", "sha256": "93f7276d2ce063a3f40a1eaf641c602e37d036fb8f1399afd57430716d6817f8"},
     {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed", "sha256": "c27bacbe896b26d01d072fb68168c18b5afd279d8cec0eb8da62e65b635c7d7e"},
     {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed", "sha256": "120f0f3dc42095ab3566899f894987e7aba8de2c4500906ffdaa342dc27c903e"},
-    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "ab8890435440467f43dee6e10fd46db3545d211a1ef9f722e7be46e4669e31ea"}
+    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "ff0c68bc9f0d1db99e6bdfd06a705941a1e9bce64f88f461a5605ec88d290889"}
   ],
   "source_index": ".harness/source-index.json",
   "unresolved_index": ".harness/unresolved.json",
-  "last_updated": "2026-07-10T19:57:06Z"
+  "last_updated": "2026-07-10T20:14:25Z"
 }

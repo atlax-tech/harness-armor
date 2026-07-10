@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables bounded scans, fingerprints, and validation.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Build a product-specific Harness from documents
@@ -102,4 +102,3 @@ assess the resulting Harness.
 Report source inventory, status counts, generated/updated/preserved files,
 conflicts, unresolved items, actual validation evidence, and manual acceptance
 steps. Recommend `harness-prompt` only when an actionable plan now exists.
-
