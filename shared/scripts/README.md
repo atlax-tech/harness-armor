@@ -13,3 +13,15 @@ Exit codes:
 
 The scripts inventory, hash, and validate evidence. They do not interpret
 product semantics, call a model, edit business code, or authorize writes.
+
+`check_references.py` reports explicit Markdown/HTML links separately from
+existing repository paths written as inline code. Explicit links are checked
+for missing targets and anchors. Missing inline tokens are left unassessed to
+avoid treating API routes, package names, commands, or future paths as broken
+files. `coverage.status` is `NO_LOCAL_REFERENCES_DETECTED` when no local
+reference evidence was inspected.
+
+`score_harness_health.py` discovers role-equivalent product, architecture,
+verification, acceptance, continuity, and Harness documents. Its `layout` and
+`role_evidence` fields explain the structural basis for managed, custom, or
+partial scoring; semantic consistency remains a host-agent responsibility.

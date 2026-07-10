@@ -18,6 +18,12 @@ A substantive README alone remains `EMPTY` unless it defines enough product
 requirements to act as the product source. When that judgment is uncertain,
 show the uncertainty and use `MIXED_OR_CONFLICTED` rather than guessing.
 
+Custom layouts do not need Harness Armor filenames. Deterministic evidence for
+a coherent custom Harness requires an agent entry file, architecture evidence,
+verification or quality-gate evidence, and at least one product, continuity, or
+Harness-overview source. Partial guidance around business code remains
+`LEGACY_CODE` with an uncertainty instead of being promoted by file count.
+
 ## Managed routing intent
 
 - Words such as sync, update Harness, changed architecture, changed commands,
@@ -31,4 +37,3 @@ show the uncertainty and use `MIXED_OR_CONFLICTED` rather than guessing.
 A handoff contains the state, evidence paths, uncertainties, and the user's
 original intent. It does not contain invented project conclusions or a copied
 specialist workflow.
-

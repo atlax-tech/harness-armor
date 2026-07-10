@@ -13,11 +13,11 @@
     {"path": "docs/ARCHITECTURE.md", "owner": "harness-armor", "mode": "managed", "sha256": "e608722e727bdc7296a16a711eeb0a8158d7c6b39d1eb1bcb63396e2eadd6792"},
     {"path": "docs/DESIGN.md", "owner": "harness-armor", "mode": "managed", "sha256": "158ff4d15898a0b1b5d01f24e80581cd6c37ead1bc2cdac536bad98d154dee2d"},
     {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed", "sha256": "93f7276d2ce063a3f40a1eaf641c602e37d036fb8f1399afd57430716d6817f8"},
-    {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed", "sha256": "78ae0835877d02cdd999aafa17fe2be3fbad8ee82801e54b93036835ab00ccfb"},
+    {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed", "sha256": "c27bacbe896b26d01d072fb68168c18b5afd279d8cec0eb8da62e65b635c7d7e"},
     {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed", "sha256": "120f0f3dc42095ab3566899f894987e7aba8de2c4500906ffdaa342dc27c903e"},
     {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed", "sha256": "ab8890435440467f43dee6e10fd46db3545d211a1ef9f722e7be46e4669e31ea"}
   ],
   "source_index": ".harness/source-index.json",
   "unresolved_index": ".harness/unresolved.json",
-  "last_updated": "2026-07-11T00:00:00Z"
+  "last_updated": "2026-07-10T19:57:06Z"
 }

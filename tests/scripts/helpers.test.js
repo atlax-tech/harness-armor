@@ -130,3 +130,53 @@ test("duplicate documents do not improve machine health score", () => {
     assert.equal(after.json.score, before.json.score);
   } finally { removeTree(root); }
 });
+
+test("custom Harness references include repository paths written as inline code", () => {
+  const root = fixture("custom-harness-realistic-repo");
+  const before = hashTree(root);
+  const result = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "check_references.py"), root]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.json.valid, true);
+  assert.ok(result.json.checked_references >= 8, JSON.stringify(result.json));
+  assert.ok(result.json.coverage.inline_existing_checked >= 8, JSON.stringify(result.json));
+  assert.equal(hashTree(root), before);
+});
+
+test("reference checker reports zero-coverage validity without implying links were tested", () => {
+  const root = temporaryDirectory();
+  try {
+    fs.writeFileSync(path.join(root, "README.md"), "# No links\n\nPlain prose only.\n");
+    const result = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "check_references.py"), root]);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.json.valid, true);
+    assert.equal(result.json.checked_references, 0);
+    assert.equal(result.json.coverage.status, "NO_LOCAL_REFERENCES_DETECTED");
+    assert.ok(result.json.warnings.some((item) => item.includes("does not prove reference coverage")));
+  } finally { removeTree(root); }
+});
+
+test("reference checker still rejects missing explicit Markdown links", () => {
+  const root = temporaryDirectory();
+  try {
+    fs.writeFileSync(path.join(root, "README.md"), "# Broken\n\n[Missing](docs/missing.md)\n");
+    const result = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "check_references.py"), root]);
+    assert.equal(result.status, 1);
+    assert.equal(result.json.valid, false);
+    assert.equal(result.json.coverage.explicit_checked, 1);
+    assert.ok(result.json.broken_references.some((item) => item.target === "docs/missing.md" && item.reason === "missing"));
+  } finally { removeTree(root); }
+});
+
+test("custom Harness health recognizes role-equivalent files and Chinese preservation boundaries", () => {
+  const root = fixture("custom-harness-realistic-repo");
+  const before = hashTree(root);
+  const result = runJson(PYTHON, [path.join(ROOT, "shared", "scripts", "score_harness_health.py"), root]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(result.json.score >= 65, JSON.stringify(result.json));
+  assert.equal(result.json.layout, "custom");
+  const boundary = result.json.dimensions.find((item) => item.id === "change-boundaries");
+  assert.equal(boundary.score, boundary.max_score);
+  const understandability = result.json.dimensions.find((item) => item.id === "understandability");
+  assert.equal(understandability.score, understandability.max_score);
+  assert.equal(hashTree(root), before);
+});
