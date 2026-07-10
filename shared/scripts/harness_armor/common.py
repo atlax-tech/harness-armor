@@ -275,6 +275,18 @@ def resolve_root(value: str) -> Path:
     return root
 
 
+def _is_reparse_point(path: Path) -> bool:
+    """Detect Windows reparse points (junctions, mount points) that
+    ``os.walk(followlinks=False)`` and ``Path.is_symlink()`` miss. On
+    non-Windows systems this always returns False."""
+    if os.name != "nt":
+        return False
+    try:
+        return bool(os.lstat(path).st_file_attributes & 0x400)
+    except (OSError, AttributeError):
+        return False
+
+
 def scan_repository(
     root: Path,
     *,
@@ -295,7 +307,7 @@ def scan_repository(
         for name in sorted(dirs):
             candidate = current_path / name
             rel = normalize_relative(candidate, root)
-            if candidate.is_symlink():
+            if candidate.is_symlink() or _is_reparse_point(candidate):
                 result.skipped.append({"path": rel, "reason": "symlink-directory"})
                 continue
             if name in EXCLUDED_DIRS or matcher.ignored(rel, is_dir=True):
@@ -307,7 +319,7 @@ def scan_repository(
         for name in sorted(files):
             candidate = current_path / name
             rel = normalize_relative(candidate, root)
-            if candidate.is_symlink():
+            if candidate.is_symlink() or _is_reparse_point(candidate):
                 result.skipped.append({"path": rel, "reason": "symlink-file"})
                 continue
             if matcher.ignored(rel, is_dir=False):
