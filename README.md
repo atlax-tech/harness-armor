@@ -4,365 +4,193 @@
 
 <h1 align="center">Harness Armor</h1>
 
-<p align="center"><strong>Suit up any repository with a maintainable Harness Engineering system.</strong></p>
+<p align="center"><strong>Give every coding agent the same map, guardrails, and definition of done.</strong></p>
 
 <p align="center">
-  <a href="https://agentskills.io/specification"><img alt="Agent Skills: open standard" src="https://img.shields.io/badge/Agent%20Skills-open%20standard-F97316"></a>
-  <a href="LICENSE"><img alt="License: CC BY-NC 4.0" src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-111827"></a>
-  <img alt="Version: 0.1.1" src="https://img.shields.io/badge/version-0.1.1-1D4ED8">
-  <img alt="Local tests: 47 passing" src="https://img.shields.io/badge/local%20tests-47%20passing-16A34A">
-  <img alt="No runtime dependencies" src="https://img.shields.io/badge/runtime%20dependencies-0-0891B2">
+  <a href="https://github.com/atlax-tech/harness-armor/actions/workflows/quality.yml"><img alt="Quality" src="https://github.com/atlax-tech/harness-armor/actions/workflows/quality.yml/badge.svg?branch=main"></a>
+  <a href="https://github.com/atlax-tech/harness-armor/actions/workflows/cross-platform.yml"><img alt="Cross-platform" src="https://github.com/atlax-tech/harness-armor/actions/workflows/cross-platform.yml/badge.svg?branch=main"></a>
+  <a href="https://agentskills.io/specification"><img alt="Agent Skills open standard" src="https://img.shields.io/badge/Agent%20Skills-open%20standard-F97316"></a>
+  <a href="CHANGELOG.md"><img alt="Version 0.1.1" src="https://img.shields.io/badge/version-0.1.1-1D4ED8"></a>
+  <a href="LICENSE"><img alt="License CC BY-NC 4.0" src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-111827"></a>
 </p>
 
 <p align="center"><a href="README.md">English</a> · <a href="README.zh-CN.md">简体中文</a></p>
 
-Harness Armor is an **Agent Skills** suite for **Harness Engineering** across
-**Claude Code**, **OpenAI Codex**, **Cursor**, **TRAE**, and other **AI coding
-agents**. It turns `AGENTS.md`, product knowledge, architecture, tests,
-acceptance evidence, and safe change boundaries into maintainable **repository
-automation**—so **Vibe coding** can grow into evidence-driven engineering.
+Harness Armor is a suite of seven Agent Skills that turns repository knowledge
+into a maintainable engineering harness for Claude Code, OpenAI Codex, Cursor,
+TRAE, and compatible coding agents.
 
-The product is seven explicit Skills. The host agent reads your real repository,
-uses deterministic scanners for facts, proposes scoped work, crosses the right
-authorization gate, and verifies the outcome. npm only installs those Skills;
-it never substitutes a traditional CLI for the agent workflow.
+It helps an agent answer three questions before it changes your code:
 
-> **The shortest mental model:** the agent understands meaning; the scripts
-> inventory, hash, and validate evidence.
+- **What is true?** Product intent, architecture, commands, tests, and known
+  gaps are traced back to repository evidence.
+- **What is allowed?** Every workflow has an explicit file perimeter and
+  authorization boundary.
+- **What proves completion?** Tests, acceptance checks, and unresolved risks
+  stay visible instead of becoming confident guesses.
 
----
+> The agent handles meaning. Small deterministic tools inventory, fingerprint,
+> and validate the evidence.
 
-## Install in 60 seconds
+## Quick start
 
-### Claude Code — exact `/harness` commands
+The npm package is not published yet. Install from the checked-out GitHub source
+so the command you run is explicit and reproducible:
 
 ```bash
-npx harness-armor install --target claude-user
+git clone --depth 1 https://github.com/atlax-tech/harness-armor.git
+cd harness-armor
+node ./bin/harness-armor.js install --target claude-user
 ```
 
-Then open Claude Code in any repository:
+Open Claude Code in any repository and run:
 
 ```text
 /harness
 ```
 
-Project-only install:
+For OpenAI Codex, install the same Skills to its user directory:
 
 ```bash
-npx harness-armor install --target claude-project --project-root .
+node ./bin/harness-armor.js install --target codex-user
 ```
 
-### OpenAI Codex — exact `$harness` mentions
-
-```bash
-npx harness-armor install --target codex-user
-```
-
-Then:
+Then mention the router explicitly:
 
 ```text
 $harness
 ```
 
-Project-only install:
+The first run is read-only. Harness Armor inspects the repository, shows its
+evidence and uncertainties, then routes you to the right specialist workflow.
 
-```bash
-npx harness-armor install --target codex-project --project-root .
-```
-
-Codex discovers user Skills under `~/.agents/skills` and repository Skills
-under `.agents/skills`. Each Skill also ships optional `agents/openai.yaml` UI
-metadata; the public workflow does not depend on it.
-
-### Interactive shortcut
-
-In an interactive terminal, bare `npx harness-armor` installs to the Claude Code
-user Skill directory. Scripts and CI should always pass an explicit `--target`.
-
----
-
-## One router, six specialists
+## From an unfamiliar repository to an evidence-backed plan
 
 ```text
-                         /harness · $harness
-                                  │
-                       evidence-backed state scan
-                                  │
-          ┌───────────────┬───────┴────────┬─────────────────┐
-          ▼               ▼                ▼                 ▼
-       EMPTY          DOCS_ONLY       LEGACY_CODE       HAS A HARNESS
-          │               │                │                 │
-    harness-init    harness-build   harness-promotion   check / update
-                                                               │
-                                  concrete plan ───────► harness-prompt
+repository
+   │
+   ▼
+read-only evidence scan
+   │
+   ├── empty or basic only ─────────► initialize a Harness
+   ├── product docs, no code ───────► build from documented intent
+   ├── legacy code ─────────────────► recover the current system safely
+   └── existing Harness ────────────► check health or plan an update
+                                          │
+                                          ▼
+                              execute · test · review prompts
 ```
 
-| Skill | Use it when | What it produces | Write model |
-| --- | --- | --- | --- |
-| `harness` | You do not know where to start | State, evidence, and one route | Always read-only |
-| `harness-init` | The repository is empty/basic-only | Fact-safe docs and state skeleton | New non-conflicting Harness files |
-| `harness-build` | Product docs exist, code does not | Source-linked product-specific Harness | New/approved Harness files only |
-| `harness-promotion` | Real legacy code lacks an agent Harness | Current architecture, commands, risks, boundaries | Docs/state only; no refactor |
-| `harness-update` | A managed repository changed | Drift evidence and immutable file-level plan | Writes only after separate approval |
-| `harness-check` | A managed/custom/mixed Harness needs an audit | Evidence-backed health score and findings | Always read-only |
-| `harness-prompt` | A real implementation plan exists | Execute/test/review prompts per step | New prompt tree; no implementation |
+Harness Armor does not replace your coding agent. It gives that agent a durable,
+repository-owned operating system for understanding and changing the project.
 
-Claude standalone invocation uses `/harness-*`; Codex uses `$harness-*`:
+## Seven focused Skills
 
-```text
-/harness                 $harness
-/harness-init            $harness-init
-/harness-build           $harness-build
-/harness-promotion       $harness-promotion
-/harness-update          $harness-update
-/harness-check           $harness-check
-/harness-prompt          $harness-prompt
-```
-
-If the user already names a specialist task, the router does not force them
-through onboarding again.
-
----
-
-## Repository state routing
-
-| State | Evidence shape | Default route |
+| Skill | When to use it | Outcome |
 | --- | --- | --- |
-| `EMPTY` | No substantive files, or only README/LICENSE/editor basics | `harness-init` |
-| `DOCS_ONLY` | Product/design/requirements sources, no business code | `harness-build` |
-| `LEGACY_CODE` | Business code without a complete Harness | `harness-promotion` |
-| `MANAGED_HARNESS` | Valid `.harness/manifest.json` | `harness-check`; `harness-update` for sync intent |
-| `CUSTOM_HARNESS` | Coherent non-Harness-Armor guidance | `harness-check` |
-| `MIXED_OR_CONFLICTED` | Invalid managed state or contradictory evidence | `harness-check`, read-only |
+| `harness` | You do not know where to start | Repository state, evidence, and one recommended route |
+| `harness-init` | The repository is empty or basic-only | A fact-safe Harness foundation |
+| `harness-build` | Product documents exist before implementation | A source-linked engineering Harness |
+| `harness-promotion` | Real code exists without reliable agent guidance | Current architecture, verified commands, risks, and boundaries |
+| `harness-check` | A managed or custom Harness needs an audit | Read-only health findings with evidence |
+| `harness-update` | Product, architecture, code, or tests changed | Drift report and an approval-gated update plan |
+| `harness-prompt` | A real implementation plan is ready | Separate execute, test, and review prompts |
 
-The detector returns a candidate, confidence, evidence, and uncertainties. The
-host agent reads the relevant files before finalizing semantic conflicts.
+Invoke specialists directly when you already know the job:
 
----
+```text
+Claude Code: /harness-check      /harness-update      /harness-prompt
+Codex:       $harness-check      $harness-update      $harness-prompt
+```
 
-## Safety is the workflow
+## Why teams use it
 
-Harness Armor does not confuse speed with permission.
-
-1. **Evidence first** — every project conclusion is `CONFIRMED`, `INFERRED`,
-   `UNRESOLVED`, or `CONFLICTED` and points to a source.
-2. **Read before write** — the agent loads applicable instructions, product
-   context, architecture, tests, and ownership before planning edits.
-3. **File-level perimeter** — each Skill declares allowed and forbidden paths.
-4. **Separate authorization** — `harness-update` writes nothing—not even a
-   timestamp—until the user approves the displayed plan.
-5. **No silent overwrite** — user changes and managed-section conflicts stop the
-   workflow.
-6. **Real evidence** — unrun tests are reported as unrun; placeholders are not
-   completion.
-7. **Independent roles** — generated execute, test, and review prompts cannot
-   collapse into executor self-approval.
-
-Deterministic scanners exclude secrets, dependencies, caches, and build output;
-respect `.gitignore`; skip symlinks; impose file/byte limits; and default to
-read-only JSON.
-
----
-
-## Internal helper scripts
-
-The Skills call focused Python 3.9+ standard-library helpers. They do not call an
-LLM API and do not edit business code.
-
-| Script | Purpose |
+| Common failure mode | Harness Armor's answer |
 | --- | --- |
-| `detect_repository_state.py` | Candidate state, evidence, confidence, route |
-| `scan_repository.py` | Bounded inventory with exclusions and file kinds |
-| `fingerprint_sources.py` | Stable SHA-256 evidence fingerprints |
-| `validate_manifest.py` | Managed-state and ownership validation |
-| `validate_harness_structure.py` | Required files, manifest, and local links |
-| `check_references.py` | Broken Markdown/resource/asset/script references |
-| `detect_drift.py` | Source and managed-content fingerprint changes |
-| `score_harness_health.py` | Machine-verifiable dimensions and deduction evidence |
+| Every agent rediscovers the repository | Durable product, architecture, development, and acceptance knowledge |
+| An outdated `AGENTS.md` becomes false confidence | Short guidance that points to focused sources of truth |
+| Legacy behavior is guessed from filenames | Evidence classification with explicit unknowns and conflicts |
+| “Update the docs” silently overwrites human work | Ownership records, fingerprints, scoped diffs, and approval gates |
+| The same agent implements and self-approves | Independent execute, test, and review roles |
+| A configured workflow is reported as a passing test | Only commands and clients that actually ran are marked verified |
 
-Stable exit codes are `0` success, `1` findings, `2` usage, `3` operational
-failure, and `4` safety-limit truncation.
+## Safety is part of the product
 
----
+Harness Armor is conservative where coding agents are usually overconfident:
 
-## Installation options
+1. Repository conclusions are labeled `CONFIRMED`, `INFERRED`, `UNRESOLVED`,
+   or `CONFLICTED`.
+2. Scans and audits are read-only by default.
+3. Proposed writes stay inside a declared file-level perimeter.
+4. Managed updates require separate approval before any file changes.
+5. User edits and ownership conflicts stop replacement instead of being hidden.
+6. Unrun tests, platforms, and clients remain unverified.
+7. Harness workflows never refactor or modify business code.
 
-### Claude Code Plugin Marketplace
+## Install where you work
+
+Use the distribution command from the repository checkout:
+
+| Client | User install | Project install |
+| --- | --- | --- |
+| Claude Code | `node ./bin/harness-armor.js install --target claude-user` | `node ./bin/harness-armor.js install --target claude-project --project-root /path/to/repo` |
+| OpenAI Codex | `node ./bin/harness-armor.js install --target codex-user` | `node ./bin/harness-armor.js install --target codex-project --project-root /path/to/repo` |
+| Cursor | `node ./bin/harness-armor.js install --target cursor-user` | `node ./bin/harness-armor.js install --target cursor-project --project-root /path/to/repo` |
+| TRAE | — | `node ./bin/harness-armor.js install --target trae-project --project-root /path/to/repo` |
+| Generic Agent Skills client | — | `node ./bin/harness-armor.js install --target generic --dest /absolute/path/to/skills` |
+
+The installer only distributes and diagnoses Skills. It exposes `install`,
+`update`, `uninstall`, `doctor`, and `version`; repository Harness work stays in
+the agent workflows.
+
+Claude Code plugin metadata is also included:
 
 ```bash
 claude plugin marketplace add atlax-tech/harness-armor
 claude plugin install harness-armor@harness-armor
 ```
 
-Current Claude Code plugin Skills are namespaced. Marketplace invocation is:
+Plugin Skills use namespaced commands such as
+`/harness-armor:harness`. Use the standalone installer for exact `/harness`
+commands. The marketplace metadata is validated in tests; a real marketplace
+installation is not yet part of the verified release evidence.
 
-```text
-/harness-armor:harness
-/harness-armor:harness-init
-```
+## Verified for v0.1.1
 
-Use the standalone `claude-user` or `claude-project` installer when exact
-unnamespaced `/harness` and `/harness-init` calls are required.
+- **47/47 local tests pass** on macOS, with Markdown and package-payload checks.
+- **12/12 GitHub Actions matrix jobs pass** across Ubuntu, macOS, and Windows;
+  Node.js 18/22; and Python 3.9/3.12.
+- **Claude Code 2.1.168 on macOS is verified** for user/project installation,
+  discovery, real `/harness` invocation, conflict protection, and safe uninstall.
+- **Codex, Cursor, TRAE, and Claude Marketplace real-client invocation remains
+  unverified.** Their layouts and packaged resources are covered by automated
+  tests, but those tests are not presented as client proof.
+- The package payload contains no runtime npm dependencies and the Python
+  runtime uses only the standard library.
 
-### Cursor
+See [client compatibility evidence](docs/compatibility.md) and the
+[v0.1.1 development log](docs/development-log/2026-07-11-v0.1.1-trustworthy-release.md)
+for the exact claim boundary.
 
-```bash
-npx harness-armor install --target cursor-user
-# or
-npx harness-armor install --target cursor-project --project-root .
-```
+## Explore the project
 
-### TRAE
+- [Product definition](docs/PRODUCT.md)
+- [Harness Engineering specification](shared/spec/harness-engineering-v1.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Testing strategy](docs/TESTING.md)
+- [Acceptance contract](docs/ACCEPTANCE.md)
+- [Changelog](CHANGELOG.md)
 
-```bash
-npx harness-armor install --target trae-project --project-root .
-```
+Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md) and
+keep changes small, evidence-backed, and independently verifiable.
 
-TRAE project installation uses the open `.agents/skills` layout. Real-client
-discovery/invocation remains a release smoke test in this repository.
+## Current boundaries
 
-### Generic Agent Skills client
-
-```bash
-npx harness-armor install --target generic --dest /absolute/path/to/skills
-```
-
-Clients without a verified native directory are documented as **Generic Agent
-Skills compatible**; Harness Armor does not invent native support claims.
-
-### Update, doctor, and uninstall
-
-```bash
-npx harness-armor@latest update --target codex-user
-npx harness-armor doctor --target codex-user
-npx harness-armor uninstall --target codex-user
-npx harness-armor version
-```
-
-The installer hashes every owned file. Update refuses local modifications,
-stages the complete incoming suite, and rolls back failed replacement. Uninstall
-removes only owned files whose hashes still match and preserves user changes.
-
-> The CLI accepts only `install`, `update`, `uninstall`, `doctor`, and `version`.
-> `harmor init`, `harmor build`, and similar business commands do not exist.
-
----
-
-## Compatibility status
-
-| Client / platform | Install adapter | Metadata/structure test | Real-client invocation |
-| --- | --- | --- | --- |
-| Claude Code standalone | user + project | Local tests pass | **Verified v0.1.1 on macOS (claude 2.1.168)** |
-| Claude Code Marketplace | `.claude-plugin/marketplace.json` | JSON/resource tests pass | Not run; namespaced calls documented |
-| OpenAI Codex | user + project | Local layout + relocated scripts pass | Not run; executable smoke script provided |
-| Cursor | user + project | Local adapter tests pass | Not run in this checkout |
-| TRAE | project `.agents/skills` | Local adapter tests pass | Not run in this checkout |
-| Generic client | absolute destination | End-to-end local smoke passes | Client-specific |
-| macOS | local development host | **47/47 tests pass** | Verified locally |
-| Linux | GitHub Actions matrix configured | Not yet run | Unverified |
-| Windows | GitHub Actions matrix configured | Not yet run | Unverified |
-
-See [the dated compatibility notes](docs/compatibility.md) for the evidence and
-claim boundary.
-
----
-
-## What gets added to a managed repository
-
-The host agent tailors the output to evidence; it does not blindly dump every
-possible file.
-
-```text
-AGENTS.md                         short entry and knowledge map
-docs/
-├── PRODUCT.md                    product truth and requirement sources
-├── ARCHITECTURE.md               current/proposed architecture, clearly separated
-├── DESIGN.md                     user and system design constraints
-├── DEVELOPMENT.md                verified commands and change rules
-├── TESTING.md                    verification strategy
-├── ACCEPTANCE.md                 completion evidence and manual checks
-├── ROADMAP.md                    sourced plan
-├── decisions/                    durable decisions
-└── development-log/              actual changes and acceptance steps
-.harness/
-├── manifest.json                 versions, ownership, managed paths
-├── source-index.json             source locators and SHA-256 fingerprints
-└── unresolved.json               gaps and conflicts
-```
-
-`AGENTS.md` stays short. Details live in focused documents and are linked, not
-copied to manufacture a feeling of completeness.
-
----
-
-## Repository architecture
-
-```text
-skills/                           seven independent public workflows
-shared/
-├── spec/                         canonical Harness Engineering v1 contract
-├── schemas/                      manifest/source/unresolved/scan schemas
-├── templates/                    fact-safe neutral templates
-├── scripts/                      deterministic Python evidence engine
-└── evals/                        health, trigger, and workflow contracts
-installer/                        distribution-only Node.js installer
-tests/
-├── fixtures/                     ten repository shapes
-├── scripts/                      safety, limits, drift, health
-├── skills/                       open Skill structure and boundaries
-├── installation/                 adapters, relocation, conflicts, uninstall
-└── evals/                        bilingual trigger/workflow corpus checks
-```
-
-Source/plugin layouts keep `skills/` and `shared/` together. Direct installs put
-the seven Skills at the client Skill root and the canonical runtime in a
-manifest-owned `.harness-armor/` sibling. No symlinks are used.
-
----
-
-## Verification
-
-```bash
-npm test
-npm run lint:markdown
-npm pack --dry-run --json
-```
-
-The local suite covers 47 tests with zero skips. CI defines skill validation,
-script tests, all fixture routes, trigger/workflow contracts, broken references,
-Markdown checks, package inspection, and Windows/macOS/Linux installation
-matrices. A workflow definition is not a passing remote run; check Actions
-before making a release claim.
-
----
-
-## Customize and extend
-
-- Change normative behavior in `shared/spec/` first.
-- Keep `SKILL.md` concise and move deep rules to `references/`, output templates
-  to `assets/`, and deterministic work to `scripts/`.
-- Add trigger near-misses whenever adjacent Skill boundaries change.
-- Add a fixture oracle before supporting a new repository state signal.
-- Add a native client adapter only after its official directory and invocation
-  behavior are documented and smoke-tested.
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
-
-## Limitations
-
-- Deterministic scripts cannot understand product semantics; the host agent must
-  read the relevant sources.
-- `MIXED_OR_CONFLICTED` is intentionally conservative.
-- Real Claude Code, Codex, Cursor, and TRAE invocation tests require those
-  clients and authenticated environments; they are not simulated as "passed."
-- The public owner and npm publishing identity are unresolved, so Marketplace
-  commands retain `<owner>` until release configuration. The GitHub owner is
-  `atlax-tech`; npm publishing identity is pending.
-- The repository is publicly available under CC BY-NC 4.0. The non-commercial
-  restriction means this is not an OSI-approved open-source license.
-
-## License
-
-[Creative Commons Attribution-NonCommercial 4.0 International](LICENSE).
-Personal, learning, and research use is welcome; attribution is required for
-public derivatives, and commercial use needs separate permission.
+- Harness Armor builds the engineering Harness around a repository; it does not
+  implement the repository's product features.
+- Deterministic tools can inventory and validate evidence, but the host agent
+  must still interpret product meaning.
+- The npm publishing identity is unresolved, so no npm registry package is
+  claimed or published for v0.1.1.
+- This source is available under **CC BY-NC 4.0**, which restricts commercial
+  use. Review [the license](LICENSE) before adoption.
