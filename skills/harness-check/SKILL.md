@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables manifest, reference, drift, and machine-health checks.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Audit Harness health

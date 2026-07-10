@@ -1,6 +1,20 @@
 # Client compatibility evidence
 
-Evidence checked: 2026-07-11 (v0.1.1), 2026-07-10 (v0.1.0).
+Evidence checked: 2026-07-11 (v0.1.2, v0.1.1), 2026-07-10 (v0.1.0).
+
+## v0.1.2 real-repository workflow evidence
+
+- `send-page-to-gpt`: the managed docs-first repository remained
+  `MANAGED_HARNESS`; structure validation passed, drift was empty, and 35 local
+  references were checked with no broken explicit link.
+- `craeer_echo-fkboss-finder`: a role-equivalent custom Harness with project-
+  specific filenames now routes to `CUSTOM_HARNESS -> harness-check`; 237
+  existing inline repository paths were counted with an explicit inline-only
+  coverage warning. Its project `npm run lint` and 43/43 tests passed.
+- Both checks were read-only. The second repository's pre-existing diff hash
+  stayed `03fbed12c8def3713a385d9c6282bb10811399f32f43b63a63ab2a05f64fbc14`.
+- This is source-workflow evidence from the current Codex-hosted development
+  session, not an installed Codex client discovery/invocation smoke test.
 
 ## v0.1.1 verified evidence
 

@@ -10,7 +10,7 @@
   <a href="https://github.com/atlax-tech/harness-armor/actions/workflows/quality.yml"><img alt="Quality" src="https://github.com/atlax-tech/harness-armor/actions/workflows/quality.yml/badge.svg?branch=main"></a>
   <a href="https://github.com/atlax-tech/harness-armor/actions/workflows/cross-platform.yml"><img alt="Cross-platform" src="https://github.com/atlax-tech/harness-armor/actions/workflows/cross-platform.yml/badge.svg?branch=main"></a>
   <a href="https://agentskills.io/specification"><img alt="Agent Skills open standard" src="https://img.shields.io/badge/Agent%20Skills-open%20standard-F97316"></a>
-  <a href="CHANGELOG.md"><img alt="Version 0.1.1" src="https://img.shields.io/badge/version-0.1.1-1D4ED8"></a>
+  <a href="CHANGELOG.md"><img alt="Version 0.1.2" src="https://img.shields.io/badge/version-0.1.2-1D4ED8"></a>
   <a href="LICENSE"><img alt="License CC BY-NC 4.0" src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-111827"></a>
 </p>
 
@@ -63,6 +63,8 @@ $harness
 
 The first run is read-only. Harness Armor inspects the repository, shows its
 evidence and uncertainties, then routes you to the right specialist workflow.
+Role-equivalent custom Harnesses may keep project-specific filenames; the
+detector does not require them to adopt Harness Armor's managed layout.
 
 ## From an unfamiliar repository to an evidence-backed plan
 
@@ -155,12 +157,17 @@ Plugin Skills use namespaced commands such as
 commands. The marketplace metadata is validated in tests; a real marketplace
 installation is not yet part of the verified release evidence.
 
-## Verified for v0.1.1
+## Verified for v0.1.2
 
-- **47/47 local tests pass** on macOS, with Markdown and package-payload checks.
-- **12/12 GitHub Actions matrix jobs pass** across Ubuntu, macOS, and Windows;
-  Node.js 18/22; and Python 3.9/3.12.
-- **Claude Code 2.1.168 on macOS is verified** for user/project installation,
+- **55/55 local tests pass** on macOS, including role-equivalent custom Harness,
+  partial-guidance, reference-coverage, version-consistency, installation, and
+  workflow regressions.
+- Two real repositories were exercised read-only after the fix: a managed
+  docs-first repository remained valid and drift-free, while a project-specific
+  custom Harness now routes to `harness-check` instead of `harness-promotion`.
+- The v0.1.2 release-candidate GitHub Actions matrix must pass before tagging;
+  no pending job is presented as successful evidence.
+- **Claude Code 2.1.168 on macOS remains verified from v0.1.1** for user/project installation,
   discovery, real `/harness` invocation, conflict protection, and safe uninstall.
 - **Codex, Cursor, TRAE, and Claude Marketplace real-client invocation remains
   unverified.** Their layouts and packaged resources are covered by automated
@@ -169,7 +176,7 @@ installation is not yet part of the verified release evidence.
   runtime uses only the standard library.
 
 See [client compatibility evidence](docs/compatibility.md) and the
-[v0.1.1 development log](docs/development-log/2026-07-11-v0.1.1-trustworthy-release.md)
+[v0.1.2 release-candidate log](docs/development-log/2026-07-11-v0.1.2-release-candidate.md)
 for the exact claim boundary.
 
 ## Explore the project
@@ -191,6 +198,6 @@ keep changes small, evidence-backed, and independently verifiable.
 - Deterministic tools can inventory and validate evidence, but the host agent
   must still interpret product meaning.
 - The npm publishing identity is unresolved, so no npm registry package is
-  claimed or published for v0.1.1.
+  claimed or published for v0.1.2.
 - This source is available under **CC BY-NC 4.0**, which restricts commercial
   use. Review [the license](LICENSE) before adoption.

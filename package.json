@@ -1,6 +1,6 @@
 {
   "name": "harness-armor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Suit up any repository with a maintainable Harness Engineering system.",
   "type": "module",
   "bin": {

@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Suit up any repository with a maintainable Harness Engineering system.",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "plugins": [
     {
@@ -13,7 +13,7 @@
       "description": "Seven evidence-first Agent Skills for repository Harness Engineering.",
       "source": "./",
       "strict": false,
-      "version": "0.1.1",
+      "version": "0.1.2",
       "category": "development",
       "keywords": ["harness-engineering", "agent-skills", "repository-automation", "agents-md"],
       "skills": [
@@ -28,4 +28,3 @@
     }
   ]
 }
-

@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file/search access. Python 3.9+ enables source fingerprint and Harness structure checks.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Generate independent engineering prompts
@@ -117,4 +117,3 @@ Report plan source, step count, created/preserved files, source mapping,
 unresolved items, role-separation checks, reference validation, and manual
 acceptance steps. State explicitly that no implementation, tests, or review were
 performed by generating the prompts.
-

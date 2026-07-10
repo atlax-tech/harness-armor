@@ -5,7 +5,7 @@ license: CC-BY-NC-4.0
 compatibility: Requires repository file access. Python 3.9+ enables bundled state and structure validation.
 metadata:
   author: harness-armor
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # Initialize an undefined repository
@@ -99,4 +99,3 @@ Report: applicability evidence, confirmed facts, unresolved items, files
 created, files preserved, validation commands with actual results, and manual
 acceptance steps. End by recommending that the user fill `docs/PRODUCT.md` and
 then invoke `harness-build` once substantive product sources exist.
-
