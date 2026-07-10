@@ -150,8 +150,9 @@ Plugin 调用带命名空间，例如 `/harness-armor:harness`。如需精确 `/
 - 修复后对两个真实仓执行了只读验证：managed docs-first 仓保持结构有效且无漂移；
   使用项目特定文件名的 custom Harness 现在正确路由到 `harness-check`，不再错误进入
   `harness-promotion`。
-- v0.1.2 release candidate 的 GitHub Actions 矩阵必须在打 tag 前通过；待运行 job
-  不会被写成成功证据。
+- v0.1.2 release candidate 的 **12/12 GitHub Actions 矩阵任务通过**，覆盖 Ubuntu、
+  macOS、Windows、Node.js 18/22 和 Python 3.9/3.12；quality 与 eval-contract
+  workflow 也已通过。
 - Claude Code 2.1.168 的用户级/项目级安装、真实 `/harness` 调用、冲突保护和安全卸载
   证据沿用 v0.1.1 macOS 实测。
 - Codex、Cursor、TRAE 和 Claude Marketplace 的真实客户端调用仍未验证；结构测试不冒充

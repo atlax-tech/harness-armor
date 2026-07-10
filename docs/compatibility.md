@@ -15,6 +15,9 @@ Evidence checked: 2026-07-11 (v0.1.2, v0.1.1), 2026-07-10 (v0.1.0).
   stayed `03fbed12c8def3713a385d9c6282bb10811399f32f43b63a63ab2a05f64fbc14`.
 - This is source-workflow evidence from the current Codex-hosted development
   session, not an installed Codex client discovery/invocation smoke test.
+- The v0.1.2 release candidate passed the quality workflow, eval-contract
+  workflow, and all 12 cross-platform jobs across Ubuntu/macOS/Windows,
+  Node.js 18/22, and Python 3.9/3.12.
 
 ## v0.1.1 verified evidence
 
