@@ -169,7 +169,7 @@ def check_references(root: Path) -> dict[str, Any]:
             targets.extend(match.group(1).rstrip(".,:;)") for match in RESOURCE_PATH_RE.finditer(text))
         for raw_target in sorted(set(targets)):
             target = unquote(raw_target)
-            if not target or target.startswith(("http://", "https://", "mailto:", "data:", "#", "{{")):
+            if not target or "{{" in target or "}}" in target or target.startswith(("http://", "https://", "mailto:", "data:", "#")):
                 continue
             checked += 1
             path_part, _, anchor = target.partition("#")
