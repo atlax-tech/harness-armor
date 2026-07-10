@@ -31,6 +31,16 @@ DOC_SIGNAL_NAMES = {
 }
 CUSTOM_HARNESS_NAMES = {"agents.md", "claude.md", "copilot-instructions.md"}
 CONFLICT_MARKERS = ("<<<<<<<", "=======", ">>>>>>>")
+ROLE_NAME_MARKERS = {
+    "product": ("product", "prd", "requirement", "spec"),
+    "architecture": ("architecture", "architecture-design", "system-design"),
+    "development": ("development", "contributing", "developer-guide"),
+    "testing": ("testing", "verification", "quality-gate", "quality_gate", "test-plan"),
+    "acceptance": ("acceptance", "verification", "quality-gate", "quality_gate"),
+    "state": ("task-state", "task_state", "roadmap", "status", "progress"),
+    "harness": ("harness",),
+    "design": ("design", "ui-ux", "ui_ux"),
+}
 
 
 def detect_state(root: Path, *, limits: Optional[ScanLimits] = None) -> dict[str, Any]:
@@ -81,15 +91,19 @@ def detect_state(root: Path, *, limits: Optional[ScanLimits] = None) -> dict[str
         or Path(path).name.lower().startswith(("prd", "requirements", "spec"))
         for path in doc_paths
     )
-    has_custom = any(
-        Path(path).name.lower() in CUSTOM_HARNESS_NAMES for path in paths
-    ) or _has_harness_doc_set(lower_paths)
+    custom_roles = _discover_harness_roles(paths)
+    has_custom = bool(custom_roles["agents"]) or _has_harness_doc_set(lower_paths)
+    has_coherent_custom = _has_coherent_custom_harness(custom_roles)
 
     if code_paths:
         evidence.append({"kind": "business-code", "sample": code_paths[:20], "count": len(code_paths)})
-        if has_custom and _has_harness_doc_set(lower_paths):
-            evidence.append({"kind": "custom-harness-signals", "paths": _custom_harness_paths(paths)})
-            return _state_result(root, "CUSTOM_HARNESS", 0.86, evidence, uncertainties, scan)
+        if has_coherent_custom:
+            evidence.append({
+                "kind": "custom-harness-signals",
+                "paths": _custom_harness_paths(paths),
+                "roles": _role_evidence(custom_roles),
+            })
+            return _state_result(root, "CUSTOM_HARNESS", 0.9, evidence, uncertainties, scan)
         if has_custom:
             uncertainties.append("Custom agent instructions exist but a complete Harness structure was not established.")
         return _state_result(root, "LEGACY_CODE", 0.93, evidence, uncertainties, scan)
@@ -139,6 +153,36 @@ def _has_harness_doc_set(paths: set[str]) -> bool:
     return "agents.md" in paths and len(required & paths) >= 2
 
 
+def _discover_harness_roles(paths: Iterable[str]) -> dict[str, list[str]]:
+    roles = {"agents": []}
+    roles.update({role: [] for role in ROLE_NAME_MARKERS})
+    for path in sorted(paths):
+        pure = Path(path)
+        name = pure.name.lower()
+        if name in CUSTOM_HARNESS_NAMES:
+            roles["agents"].append(path)
+        if pure.suffix.lower() not in DOCUMENT_SUFFIXES:
+            continue
+        stem = pure.stem.lower().replace(" ", "-")
+        parts = {part.lower() for part in pure.parts}
+        for role, markers in ROLE_NAME_MARKERS.items():
+            if any(stem == marker or stem.startswith(f"{marker}-") for marker in markers):
+                roles[role].append(path)
+            elif role == "product" and "product" in parts:
+                roles[role].append(path)
+    return roles
+
+
+def _has_coherent_custom_harness(roles: dict[str, list[str]]) -> bool:
+    if not roles["agents"] or not roles["architecture"] or not roles["testing"]:
+        return False
+    return any(roles[role] for role in ("product", "state", "harness"))
+
+
+def _role_evidence(roles: dict[str, list[str]]) -> dict[str, list[str]]:
+    return {role: paths[:5] for role, paths in roles.items() if paths}
+
+
 def _custom_harness_paths(paths: Iterable[str]) -> list[str]:
     return sorted(
         path for path in paths
@@ -149,13 +193,21 @@ def _custom_harness_paths(paths: Iterable[str]) -> list[str]:
 MARKDOWN_LINK_RE = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 HTML_LINK_RE = re.compile(r"(?:href|src)=[\"']([^\"']+)[\"']")
 RESOURCE_PATH_RE = re.compile(r"(?<![\w.-])((?:scripts|references|assets)/[A-Za-z0-9_./-]+)")
-HEADING_CLEAN_RE = re.compile(r"[^a-z0-9\s-]")
+INLINE_CODE_RE = re.compile(r"(?<!`)`([^`\n]+)`(?!`)")
+FENCED_CODE_RE = re.compile(r"(?:```|~~~)[\s\S]*?(?:```|~~~)")
+HEADING_CLEAN_RE = re.compile(r"[^\w\s-]", re.UNICODE)
+ROOT_REFERENCE_NAMES = {
+    "agents.md", "claude.md", "contributing.md", "design.md", "license", "license.md",
+    "makefile", "package.json", "pyproject.toml", "readme.md", "tsconfig.json",
+}
 
 
 def check_references(root: Path) -> dict[str, Any]:
     scan = scan_repository(root)
     broken: list[dict[str, str]] = []
     checked = 0
+    explicit_checked = 0
+    inline_existing_checked = 0
     heading_cache: dict[Path, set[str]] = {}
     for item in scan.files:
         rel = item["path"]
@@ -163,17 +215,31 @@ def check_references(root: Path) -> dict[str, Any]:
             continue
         source = root / rel
         text = text_excerpt(source, max_bytes=2 * 1024 * 1024)
-        targets = [match.group(1).strip().split()[0].strip("<>\"'") for match in MARKDOWN_LINK_RE.finditer(text)]
-        targets.extend(match.group(1).strip() for match in HTML_LINK_RE.finditer(text))
+        targets = [(match.group(1).strip().split()[0].strip("<>\"'"), "explicit") for match in MARKDOWN_LINK_RE.finditer(text)]
+        targets.extend((match.group(1).strip(), "explicit") for match in HTML_LINK_RE.finditer(text))
         if source.name == "SKILL.md":
-            targets.extend(match.group(1).rstrip(".,:;)") for match in RESOURCE_PATH_RE.finditer(text))
-        for raw_target in sorted(set(targets)):
+            targets.extend((match.group(1).rstrip(".,:;)"), "explicit") for match in RESOURCE_PATH_RE.finditer(text))
+        without_fences = FENCED_CODE_RE.sub("", text)
+        targets.extend((target, "inline-existing") for target in _inline_repository_targets(without_fences))
+        for raw_target, reference_kind in sorted(set(targets)):
             target = unquote(raw_target)
             if not target or "{{" in target or "}}" in target or target.startswith(("http://", "https://", "mailto:", "data:", "#")):
                 continue
-            checked += 1
             path_part, _, anchor = target.partition("#")
-            resolved = (source.parent / path_part).resolve()
+            if reference_kind == "inline-existing":
+                if path_part.startswith(("/", "~")):
+                    continue
+                candidates = [(root / path_part).resolve(), (source.parent / path_part).resolve()]
+                resolved = next((candidate for candidate in candidates if candidate.exists()), None)
+                if resolved is None:
+                    continue
+            else:
+                resolved = (source.parent / path_part).resolve()
+            checked += 1
+            if reference_kind == "explicit":
+                explicit_checked += 1
+            else:
+                inline_existing_checked += 1
             try:
                 resolved.relative_to(root)
             except ValueError:
@@ -186,15 +252,48 @@ def check_references(root: Path) -> dict[str, Any]:
                 headings = heading_cache.setdefault(resolved, _headings(resolved))
                 if anchor.lower() not in headings:
                     broken.append({"source": rel, "target": raw_target, "reason": "missing-anchor"})
+    if explicit_checked:
+        coverage_status = "EXPLICIT_AND_INLINE_CHECKED" if inline_existing_checked else "EXPLICIT_CHECKED"
+    elif inline_existing_checked:
+        coverage_status = "INLINE_EXISTING_ONLY"
+    else:
+        coverage_status = "NO_LOCAL_REFERENCES_DETECTED"
+    warnings = list(scan.warnings)
+    if checked == 0:
+        warnings.append("No local repository references were detected; validity does not prove reference coverage.")
+    elif explicit_checked == 0:
+        warnings.append("Only existing inline-code paths were counted; missing inline tokens are intentionally unassessed.")
     return {
         "schema_version": "1.0.0",
         "root": str(root),
         "valid": not broken,
         "checked_references": checked,
         "broken_references": broken,
-        "warnings": scan.warnings,
+        "coverage": {
+            "status": coverage_status,
+            "checked": checked,
+            "explicit_checked": explicit_checked,
+            "inline_existing_checked": inline_existing_checked,
+        },
+        "warnings": warnings,
         "scan_truncated": scan.truncated,
     }
+
+
+def _inline_repository_targets(text: str) -> list[str]:
+    targets: list[str] = []
+    for match in INLINE_CODE_RE.finditer(text):
+        candidate = match.group(1).strip().strip("<>\"'").rstrip(".,:;)")
+        if not candidate or any(char.isspace() for char in candidate):
+            continue
+        if any(marker in candidate for marker in ("*", "{{", "}}", "$", "://")):
+            continue
+        path_part = candidate.partition("#")[0].rstrip("/")
+        pure = Path(path_part)
+        if pure.name.lower() in ROOT_REFERENCE_NAMES or "/" in path_part:
+            if pure.suffix.lower() in DOCUMENT_SUFFIXES | CODE_SUFFIXES | {".json", ".toml", ".yaml", ".yml", ".xml"} or "/" in path_part:
+                targets.append(candidate)
+    return targets
 
 
 def _headings(path: Path) -> set[str]:
@@ -311,15 +410,32 @@ HEALTH_WEIGHTS = {
 
 def score_health(root: Path) -> dict[str, Any]:
     dimensions: list[dict[str, Any]] = []
-    observed = {path: (root / path).is_file() for path in [
-        "AGENTS.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md", "docs/DEVELOPMENT.md",
-        "docs/TESTING.md", "docs/ACCEPTANCE.md", ".harness/manifest.json",
-        ".harness/source-index.json", ".harness/unresolved.json",
-    ]}
-    agents_text = text_excerpt(root / "AGENTS.md") if observed["AGENTS.md"] else ""
+    scan = scan_repository(root)
+    paths = {item["path"] for item in scan.files}
+    roles = _discover_harness_roles(paths)
+    observed = {
+        "agents": bool(roles["agents"]),
+        "product": bool(roles["product"]),
+        "architecture": bool(roles["architecture"]),
+        "development": bool(roles["development"]),
+        "testing": bool(roles["testing"]),
+        "acceptance": bool(roles["acceptance"]),
+        "state": bool(roles["state"]),
+        "harness": bool(roles["harness"]),
+        "manifest": ".harness/manifest.json" in paths,
+        "source-index": ".harness/source-index.json" in paths,
+        "unresolved": ".harness/unresolved.json" in paths,
+    }
+    agents_path = roles["agents"][0] if roles["agents"] else "AGENTS.md"
+    agents_text = text_excerpt(root / agents_path) if observed["agents"] else ""
     agents_lines = len(agents_text.splitlines())
+    refs = check_references(root)
+    coherent_custom = _has_coherent_custom_harness(roles)
+    layout = "managed" if observed["manifest"] else ("custom" if coherent_custom else "partial")
+    preservation_boundary = _has_preservation_boundary(agents_text)
+    authority_boundary = _has_authority_boundary(agents_text)
     drift = None
-    if observed[".harness/manifest.json"]:
+    if observed["manifest"]:
         try:
             drift = detect_drift(root)
         except HarnessError as exc:
@@ -327,23 +443,23 @@ def score_health(root: Path) -> dict[str, Any]:
 
     checks: dict[str, tuple[float, list[dict[str, Any]], str]] = {
         "understandability": (
-            _ratio(observed, ["AGENTS.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md"]),
-            _missing_evidence(observed, ["AGENTS.md", "docs/PRODUCT.md", "docs/ARCHITECTURE.md"]),
-            "structural evidence only",
+            _ratio(observed, ["agents", "product", "architecture"]),
+            _missing_role_evidence(observed, roles, ["agents", "product", "architecture"]),
+            "role-equivalent structural evidence only",
         ),
         "agents-entry": (
-            1.0 if observed["AGENTS.md"] and 0 < agents_lines <= 120 else (0.5 if observed["AGENTS.md"] else 0.0),
-            [] if observed["AGENTS.md"] and 0 < agents_lines <= 120 else [{"path": "AGENTS.md", "finding": "missing, empty, or longer than 120 lines", "lines": agents_lines}],
+            1.0 if observed["agents"] and 0 < agents_lines <= 120 else (0.5 if observed["agents"] else 0.0),
+            [] if observed["agents"] and 0 < agents_lines <= 120 else [{"path": agents_path, "finding": "missing, empty, or longer than 120 lines", "lines": agents_lines}],
             "measured",
         ),
         "product-architecture-implementation-consistency": (
-            0.5 if observed["docs/PRODUCT.md"] and observed["docs/ARCHITECTURE.md"] else 0.0,
-            _missing_evidence(observed, ["docs/PRODUCT.md", "docs/ARCHITECTURE.md"]),
+            0.5 if observed["product"] and observed["architecture"] else 0.0,
+            _missing_role_evidence(observed, roles, ["product", "architecture"]),
             "semantic consistency requires host-agent review; score capped at 50%",
         ),
         "instruction-conflicts": (
-            0.0 if any(marker in agents_text for marker in CONFLICT_MARKERS) else (1.0 if observed["AGENTS.md"] else 0.0),
-            [{"path": "AGENTS.md", "finding": "merge conflict markers"}] if any(marker in agents_text for marker in CONFLICT_MARKERS) else [],
+            0.0 if any(marker in agents_text for marker in CONFLICT_MARKERS) else (1.0 if observed["agents"] else 0.0),
+            [{"path": agents_path, "finding": "merge conflict markers"}] if any(marker in agents_text for marker in CONFLICT_MARKERS) else [],
             "marker-based evidence",
         ),
         "documentation-drift": (
@@ -352,58 +468,58 @@ def score_health(root: Path) -> dict[str, Any]:
             "fingerprint evidence",
         ),
         "command-veracity": (
-            0.5 if observed["docs/DEVELOPMENT.md"] else 0.0,
-            _missing_evidence(observed, ["docs/DEVELOPMENT.md"]),
+            0.5 if observed["development"] or observed["testing"] else 0.0,
+            [] if observed["development"] or observed["testing"] else [{"role": "development-or-testing", "finding": "missing"}],
             "command existence can be checked; successful execution requires host evidence",
         ),
         "change-boundaries": (
-            1.0 if "Preserve" in agents_text or "preserve" in agents_text else 0.0,
-            [] if "preserve" in agents_text.lower() else [{"path": "AGENTS.md", "finding": "no explicit preservation boundary"}],
-            "textual evidence",
+            1.0 if preservation_boundary else 0.0,
+            [] if preservation_boundary else [{"path": agents_path, "finding": "no explicit preservation boundary"}],
+            "multilingual textual evidence",
         ),
         "verification-loop": (
-            _ratio(observed, ["docs/TESTING.md", "docs/ACCEPTANCE.md"]),
-            _missing_evidence(observed, ["docs/TESTING.md", "docs/ACCEPTANCE.md"]),
-            "structural evidence only",
+            _ratio(observed, ["testing", "acceptance"]),
+            _missing_role_evidence(observed, roles, ["testing", "acceptance"]),
+            "role-equivalent structural evidence only",
         ),
         "source-traceability": (
-            1.0 if observed[".harness/source-index.json"] else 0.0,
-            _missing_evidence(observed, [".harness/source-index.json"]),
-            "state-file evidence",
+            1.0 if observed["source-index"] else (0.5 if refs["checked_references"] and refs["valid"] else 0.0),
+            [] if observed["source-index"] or (refs["checked_references"] and refs["valid"]) else [{"role": "source-index-or-valid-references", "finding": "missing"}],
+            "managed source index or repository-reference evidence; semantic traceability remains unassessed",
         ),
         "state-continuity": (
-            _ratio(observed, [".harness/manifest.json", ".harness/unresolved.json"]),
-            _missing_evidence(observed, [".harness/manifest.json", ".harness/unresolved.json"]),
-            "state-file evidence",
+            _ratio(observed, ["manifest", "unresolved"]) if observed["manifest"] else (0.5 if observed["state"] else 0.0),
+            [] if (observed["manifest"] and observed["unresolved"]) or observed["state"] else [{"role": "managed-state-or-task-state", "finding": "missing"}],
+            "managed state or custom task-state evidence",
         ),
         "file-ownership": (
-            1.0 if observed[".harness/manifest.json"] else 0.0,
-            _missing_evidence(observed, [".harness/manifest.json"]),
-            "manifest evidence",
+            1.0 if observed["manifest"] else (0.5 if authority_boundary else 0.0),
+            [] if observed["manifest"] or authority_boundary else [{"role": "manifest-or-authority-map", "finding": "missing"}],
+            "manifest ownership or custom authority-map evidence",
         ),
         "context-efficiency": (
-            1.0 if observed["AGENTS.md"] and agents_lines <= 120 else 0.0,
-            [] if observed["AGENTS.md"] and agents_lines <= 120 else [{"path": "AGENTS.md", "finding": "entry point is not concise", "lines": agents_lines}],
+            1.0 if observed["agents"] and agents_lines <= 120 else 0.0,
+            [] if observed["agents"] and agents_lines <= 120 else [{"path": agents_path, "finding": "entry point is not concise", "lines": agents_lines}],
             "line-count evidence; document count adds no points",
         ),
         "cross-agent-compatibility": (
-            0.5 if observed["AGENTS.md"] else 0.0,
-            _missing_evidence(observed, ["AGENTS.md"]),
+            0.5 if observed["agents"] else 0.0,
+            [] if observed["agents"] else [{"role": "agents", "finding": "missing"}],
             "client-specific compatibility requires live verification",
         ),
         "updateability": (
-            1.0 if observed[".harness/manifest.json"] and observed[".harness/source-index.json"] else 0.0,
-            _missing_evidence(observed, [".harness/manifest.json", ".harness/source-index.json"]),
-            "managed-state evidence",
+            1.0 if observed["manifest"] and observed["source-index"] else (0.5 if observed["state"] and refs["checked_references"] else 0.0),
+            [] if (observed["manifest"] and observed["source-index"]) or (observed["state"] and refs["checked_references"]) else [{"role": "managed-state-or-custom-continuity", "finding": "missing"}],
+            "managed baseline or custom continuity/reference evidence",
         ),
         "safety": (
-            0.5 if observed["AGENTS.md"] else 0.0,
-            _missing_evidence(observed, ["AGENTS.md"]),
+            0.5 if observed["agents"] and preservation_boundary else 0.0,
+            [] if observed["agents"] and preservation_boundary else [{"role": "agents-safety-boundary", "finding": "missing"}],
             "secret handling and safe-change boundaries require host evidence; score capped at 50%",
         ),
         "nonfiction": (
-            0.5 if observed["docs/ACCEPTANCE.md"] else 0.0,
-            _missing_evidence(observed, ["docs/ACCEPTANCE.md"]),
+            0.5 if observed["acceptance"] else 0.0,
+            _missing_role_evidence(observed, roles, ["acceptance"]),
             "semantic non-fiction review requires host evidence; score capped at 50%",
         ),
     }
@@ -427,6 +543,8 @@ def score_health(root: Path) -> dict[str, Any]:
         "score": score,
         "max_score": 100,
         "grade": "A" if score >= 90 else "B" if score >= 80 else "C" if score >= 70 else "D" if score >= 60 else "F",
+        "layout": layout,
+        "role_evidence": _role_evidence(roles),
         "dimensions": dimensions,
         "rule": "File count never adds points; semantic dimensions remain capped without host-agent evidence.",
         "read_only": True,
@@ -437,5 +555,19 @@ def _ratio(observed: dict[str, bool], keys: list[str]) -> float:
     return sum(1 for key in keys if observed[key]) / len(keys)
 
 
-def _missing_evidence(observed: dict[str, bool], keys: list[str]) -> list[dict[str, str]]:
-    return [{"path": key, "finding": "missing"} for key in keys if not observed[key]]
+def _missing_role_evidence(observed: dict[str, bool], roles: dict[str, list[str]], keys: list[str]) -> list[dict[str, str]]:
+    return [{"role": key, "finding": "missing"} for key in keys if not observed[key]]
+
+
+def _has_preservation_boundary(text: str) -> bool:
+    lower = text.lower()
+    english = ("preserve", "do not overwrite", "don't overwrite", "user-owned", "uncommitted change")
+    chinese = ("不得覆盖", "不要覆盖", "禁止覆盖", "保留用户", "未提交的修改", "未提交修改")
+    return any(marker in lower for marker in english) or any(marker in text for marker in chinese)
+
+
+def _has_authority_boundary(text: str) -> bool:
+    lower = text.lower()
+    english = ("source of truth", "authoritative", "authority", "owned by", "user-owned")
+    chinese = ("事实来源", "权威", "所有权", "用户维护", "入口地图")
+    return any(marker in lower for marker in english) or any(marker in text for marker in chinese)

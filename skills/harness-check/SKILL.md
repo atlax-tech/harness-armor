@@ -41,6 +41,11 @@ rewrite the repository.
 5. Treat script scores as machine-verifiable coverage only. Independently read
    enough product, architecture, code, tests, commands, and acceptance evidence
    to assess semantic dimensions.
+   - Read `layout` and `role_evidence`; a coherent custom layout may use
+     project-specific filenames.
+   - Read reference `coverage.status` and warnings. Zero detected references do
+     not prove reference health, and existing inline paths do not prove that
+     missing inline tokens are valid repository paths.
 6. Score all dimensions in the canonical health file. For each deduction, cite
    a file, locator, command output, or missing expected link. Do not award points
    for file count or polished prose.
@@ -93,4 +98,3 @@ Use [assets/health-report.md](assets/health-report.md). Include total score,
 dimension scores, evidence, blocking/high/improvement findings, file-level
 recommendations, estimated impact, unassessed areas, executed commands, and an
 explicit `No files changed` statement.
-
