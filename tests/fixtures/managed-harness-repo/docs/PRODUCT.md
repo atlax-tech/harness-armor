@@ -1,0 +1,4 @@
+# Product
+
+Managed fixture product.
+

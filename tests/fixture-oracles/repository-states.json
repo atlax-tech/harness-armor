@@ -1,0 +1,12 @@
+{
+  "empty-repo": {"state": "EMPTY", "route": "harness-init"},
+  "docs-only-repo": {"state": "DOCS_ONLY", "route": "harness-build"},
+  "legacy-node-repo": {"state": "LEGACY_CODE", "route": "harness-promotion"},
+  "legacy-python-repo": {"state": "LEGACY_CODE", "route": "harness-promotion"},
+  "legacy-java-repo": {"state": "LEGACY_CODE", "route": "harness-promotion"},
+  "managed-harness-repo": {"state": "MANAGED_HARNESS", "route": "harness-check"},
+  "custom-harness-repo": {"state": "CUSTOM_HARNESS", "route": "harness-check"},
+  "drifted-harness-repo": {"state": "MANAGED_HARNESS", "route": "harness-check"},
+  "conflicted-docs-repo": {"state": "MIXED_OR_CONFLICTED", "route": "harness-check"},
+  "mixed-repo": {"state": "MIXED_OR_CONFLICTED", "route": "harness-check"}
+}

@@ -22,7 +22,7 @@ from .manifest import validate_manifest_file
 
 
 BASIC_FILES = {
-    ".gitignore", ".gitattributes", ".editorconfig", "license", "license.md",
+    ".gitignore", ".gitattributes", ".editorconfig", ".gitkeep", "license", "license.md",
     "readme", "readme.md", "readme.txt", "notice", "notice.md",
 }
 DOC_SIGNAL_NAMES = {

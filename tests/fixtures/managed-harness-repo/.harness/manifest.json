@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "spec_version": "1.0.0",
+  "generator": {"name": "harness-armor", "version": "0.1.0"},
+  "repository_state": "MANAGED_HARNESS",
+  "managed_files": [],
+  "source_index": ".harness/source-index.json",
+  "unresolved_index": ".harness/unresolved.json",
+  "last_updated": "2026-07-10T00:00:00Z"
+}
+

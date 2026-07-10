@@ -1,0 +1,4 @@
+# Testing
+
+Run `node --test`.
+

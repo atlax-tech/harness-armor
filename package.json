@@ -20,12 +20,12 @@
     "VERSION"
   ],
   "scripts": {
-    "test": "node --test tests/**/*.test.js",
-    "test:scripts": "node --test tests/scripts/*.test.js",
-    "test:skills": "node --test tests/skills/*.test.js",
-    "test:fixtures": "node --test tests/fixtures/*.test.js",
-    "test:installation": "node --test tests/installation/*.test.js",
-    "test:evals": "node --test tests/evals/*.test.js",
+    "test": "node tests/run-tests.js",
+    "test:scripts": "node tests/run-tests.js scripts",
+    "test:skills": "node tests/run-tests.js skills",
+    "test:fixtures": "node tests/run-tests.js fixtures",
+    "test:installation": "node tests/run-tests.js installation",
+    "test:evals": "node tests/run-tests.js evals",
     "lint:markdown": "node tests/scripts/markdown-lint.js",
     "prepack": "npm test"
   },
@@ -53,4 +53,3 @@
   },
   "homepage": "https://github.com/<owner>/harness-armor#readme"
 }
-
