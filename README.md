@@ -165,8 +165,9 @@ installation is not yet part of the verified release evidence.
 - Two real repositories were exercised read-only after the fix: a managed
   docs-first repository remained valid and drift-free, while a project-specific
   custom Harness now routes to `harness-check` instead of `harness-promotion`.
-- The v0.1.2 release-candidate GitHub Actions matrix must pass before tagging;
-  no pending job is presented as successful evidence.
+- **12/12 v0.1.2 GitHub Actions matrix jobs pass** across Ubuntu, macOS, and
+  Windows; Node.js 18/22; and Python 3.9/3.12. The quality and eval-contract
+  workflows also pass on the release candidate.
 - **Claude Code 2.1.168 on macOS remains verified from v0.1.1** for user/project installation,
   discovery, real `/harness` invocation, conflict protection, and safe uninstall.
 - **Codex, Cursor, TRAE, and Claude Marketplace real-client invocation remains
