@@ -1,0 +1,24 @@
+{
+  "$schema": "../shared/schemas/manifest.schema.json",
+  "schema_version": "1.0.0",
+  "spec_version": "1.0.0",
+  "generator": {
+    "name": "harness-armor",
+    "version": "0.1.0"
+  },
+  "repository_state": "MANAGED_HARNESS",
+  "managed_files": [
+    {"path": "AGENTS.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/PRODUCT.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/ARCHITECTURE.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/DESIGN.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/DEVELOPMENT.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/TESTING.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/ACCEPTANCE.md", "owner": "harness-armor", "mode": "managed"},
+    {"path": "docs/ROADMAP.md", "owner": "harness-armor", "mode": "managed"}
+  ],
+  "source_index": ".harness/source-index.json",
+  "unresolved_index": ".harness/unresolved.json",
+  "last_updated": "2026-07-10T00:00:00Z"
+}
+

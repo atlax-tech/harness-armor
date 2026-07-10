@@ -1,0 +1,13 @@
+{
+  "$schema": "../shared/schemas/unresolved.schema.json",
+  "schema_version": "1.0.0",
+  "items": [
+    {
+      "id": "release-owner",
+      "status": "UNRESOLVED",
+      "question": "Which GitHub owner and npm publishing identity will release Harness Armor?",
+      "impact": "README marketplace commands retain the <owner> placeholder until release configuration."
+    }
+  ]
+}
+

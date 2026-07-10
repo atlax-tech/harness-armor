@@ -1,0 +1,27 @@
+{
+  "$schema": "../shared/schemas/source-index.schema.json",
+  "schema_version": "1.0.0",
+  "sources": [
+    {
+      "id": "product",
+      "path": "docs/PRODUCT.md",
+      "kind": "product",
+      "status": "CONFIRMED",
+      "sha256": "c80c0dc47203b3c9e63d932534b90c5655dd6d72fe5c0b0e753bb132ada76b92"
+    },
+    {
+      "id": "architecture",
+      "path": "docs/ARCHITECTURE.md",
+      "kind": "architecture",
+      "status": "CONFIRMED",
+      "sha256": "e608722e727bdc7296a16a711eeb0a8158d7c6b39d1eb1bcb63396e2eadd6792"
+    },
+    {
+      "id": "acceptance",
+      "path": "docs/ACCEPTANCE.md",
+      "kind": "acceptance",
+      "status": "CONFIRMED",
+      "sha256": "120f0f3dc42095ab3566899f894987e7aba8de2c4500906ffdaa342dc27c903e"
+    }
+  ]
+}
