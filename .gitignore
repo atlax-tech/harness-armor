@@ -17,3 +17,4 @@ venv/
 !.env.example
 tests/.tmp/
 *-workspace/
+*.tgz
