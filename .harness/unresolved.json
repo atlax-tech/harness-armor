@@ -4,9 +4,9 @@
   "items": [
     {
       "id": "release-owner",
-      "status": "INFERRED",
+      "status": "UNRESOLVED",
       "question": "Which GitHub owner and npm publishing identity will release Harness Armor?",
-      "impact": "GitHub owner is atlax-tech. npm publishing identity remains pending."
+      "impact": "GitHub owner is confirmed as atlax-tech. npm publishing identity remains pending until first registry publish."
     }
   ]
 }

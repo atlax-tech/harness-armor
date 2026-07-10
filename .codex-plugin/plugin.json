@@ -1,6 +1,6 @@
 {
   "name": "harness-armor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Seven evidence-first Agent Skills for maintainable Harness Engineering.",
   "skills": "../skills/"
 }
