@@ -48,7 +48,16 @@
     "trae",
     "agents-md",
     "ai-coding-agents",
-    "repository-automation"
+    "repository-automation",
+    "vibe-coding",
+    "agentic-loop",
+    "context-engineering",
+    "mcp",
+    "evals",
+    "agent-first",
+    "developer-tools",
+    "codebase-onboarding",
+    "llm-tools"
   ],
   "license": "CC-BY-NC-4.0",
   "repository": {
