@@ -9,6 +9,7 @@
 <p align="center">
   <a href="https://agentskills.io/specification"><img alt="Agent Skills 开放规范" src="https://img.shields.io/badge/Agent%20Skills-open%20standard-F97316"></a>
   <a href="LICENSE"><img alt="CC BY-NC 4.0 License" src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-111827"></a>
+  <img alt="Version 0.1.1" src="https://img.shields.io/badge/version-0.1.1-1D4ED8">
   <img alt="本地测试 47 项通过" src="https://img.shields.io/badge/local%20tests-47%20passing-16A34A">
   <img alt="运行时零依赖" src="https://img.shields.io/badge/runtime%20dependencies-0-0891B2">
 </p>
@@ -237,9 +238,9 @@ npx harness-armor version
 
 | 客户端 / 平台 | 安装 Adapter | 元数据/结构测试 | 真实客户端调用 |
 | --- | --- | --- | --- |
-| Claude Code 独立 Skills | 用户级 + 项目级 | 本地通过 | 当前 checkout 未运行 |
+| Claude Code 独立 Skills | 用户级 + 项目级 | 本地通过 | **v0.1.1 已在 macOS 验证（claude 2.1.168）** |
 | Claude Code Marketplace | Marketplace JSON | JSON/资源测试通过 | 未运行；已明确命名空间调用 |
-| OpenAI Codex | 用户级 + 项目级 | 布局和 relocated 脚本通过 | 当前 checkout 未运行 |
+| OpenAI Codex | 用户级 + 项目级 | 布局和 relocated 脚本通过 | 未运行；已提供可执行 smoke 脚本 |
 | Cursor | 用户级 + 项目级 | Adapter 本地测试通过 | 未运行 |
 | TRAE | 项目 `.agents/skills` | Adapter 本地测试通过 | 未运行 |
 | Generic client | 绝对目录 | 本地端到端 smoke 通过 | 取决于客户端 |

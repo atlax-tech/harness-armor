@@ -9,6 +9,7 @@
 <p align="center">
   <a href="https://agentskills.io/specification"><img alt="Agent Skills: open standard" src="https://img.shields.io/badge/Agent%20Skills-open%20standard-F97316"></a>
   <a href="LICENSE"><img alt="License: CC BY-NC 4.0" src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-111827"></a>
+  <img alt="Version: 0.1.1" src="https://img.shields.io/badge/version-0.1.1-1D4ED8">
   <img alt="Local tests: 47 passing" src="https://img.shields.io/badge/local%20tests-47%20passing-16A34A">
   <img alt="No runtime dependencies" src="https://img.shields.io/badge/runtime%20dependencies-0-0891B2">
 </p>
@@ -251,9 +252,9 @@ removes only owned files whose hashes still match and preserves user changes.
 
 | Client / platform | Install adapter | Metadata/structure test | Real-client invocation |
 | --- | --- | --- | --- |
-| Claude Code standalone | user + project | Local tests pass | Not run in this checkout |
+| Claude Code standalone | user + project | Local tests pass | **Verified v0.1.1 on macOS (claude 2.1.168)** |
 | Claude Code Marketplace | `.claude-plugin/marketplace.json` | JSON/resource tests pass | Not run; namespaced calls documented |
-| OpenAI Codex | user + project | Local layout + relocated scripts pass | Not run in this checkout |
+| OpenAI Codex | user + project | Local layout + relocated scripts pass | Not run; executable smoke script provided |
 | Cursor | user + project | Local adapter tests pass | Not run in this checkout |
 | TRAE | project `.agents/skills` | Local adapter tests pass | Not run in this checkout |
 | Generic client | absolute destination | End-to-end local smoke passes | Client-specific |

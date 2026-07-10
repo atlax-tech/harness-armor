@@ -1,6 +1,33 @@
 # Client compatibility evidence
 
-Evidence checked: 2026-07-10.
+Evidence checked: 2026-07-11 (v0.1.1), 2026-07-10 (v0.1.0).
+
+## v0.1.1 verified evidence
+
+### Claude Code (real client)
+
+- Client: `claude` 2.1.168 on macOS, authenticated.
+- User-level install: 77 payload files, 7 Skills at `~/.claude/skills/`,
+  `doctor` healthy.
+- Project-level install: 77 payload files at `.claude/skills/`, `doctor`
+  healthy.
+- Real invocation: `claude -p "/harness"` discovered the router Skill, read
+  the repository, detected the EMPTY state, and requested write authorization
+  before creating Harness files. Both user-level and project-level discovery
+  succeeded.
+- Conflict protection: modifying an installed `SKILL.md` and running `update`
+  reported 1 conflict without overwriting the user edit.
+- Safe uninstall: the user-modified file was preserved; 76 owned files removed.
+- Executable smoke script: `tests/scripts/claude-smoke.sh`.
+
+### Codex (blocking evidence)
+
+- `command -v codex` => not found on this checkout.
+- Executable smoke script `tests/scripts/codex-smoke.sh` exits with code 2 and
+  prints the blocking evidence when Codex is unavailable or unauthenticated.
+- The script covers codex-user/codex-project install, doctor, real `$harness`
+  invocation, idempotent reinstall, conflict protection, and safe uninstall
+  once a real client is available.
 
 ## Open Agent Skills
 
@@ -14,7 +41,8 @@ Current official Codex guidance documents explicit `$skill-name` invocation,
 implicit description matching, repository `.agents/skills`, user
 `~/.agents/skills`, and optional `agents/openai.yaml`. Harness Armor tests both
 direct layouts and relocated script execution. A real authenticated Codex
-invocation has not run in this checkout.
+invocation has not run in this checkout; run `tests/scripts/codex-smoke.sh`
+when a client is available.
 
 - [Codex: Build skills](https://developers.openai.com/codex/skills)
 
